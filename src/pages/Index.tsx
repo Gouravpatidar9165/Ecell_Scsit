@@ -1,13 +1,37 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React, { useEffect } from 'react';
+import { Toaster } from "@/components/ui/toaster";
+import Navbar from '@/components/Navbar';
+import HeroSection from '@/components/HeroSection';
+import AboutSection from '@/components/AboutSection';
+import InitiativesSection from '@/components/InitiativesSection';
+import TeamSection from '@/components/TeamSection';
+import ContactSection from '@/components/ContactSection';
+import Footer from '@/components/Footer';
+
+const Index: React.FC = () => {
+  useEffect(() => {
+    const loadFontAwesome = () => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css';
+      document.head.appendChild(link);
+    };
+    
+    loadFontAwesome();
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <HeroSection />
+      <AboutSection />
+      <InitiativesSection />
+      <TeamSection />
+      <ContactSection />
+      <Footer />
+      <Toaster />
+    </main>
   );
 };
 
