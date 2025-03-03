@@ -16,8 +16,11 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, Edit, UserPlus, Link as LinkIcon } from "lucide-react";
 import ImageWithFallback from '@/components/ImageWithFallback';
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface SocialLink {
+  id?: string;
   icon: string;
   url: string;
 }
@@ -26,84 +29,11 @@ interface TeamMember {
   id: string;
   name: string;
   position: string;
-  imageSrc: string;
+  image_url: string;
   socialLinks: SocialLink[];
 }
 
 const AdminMembers: React.FC = () => {
-  const [members, setMembers] = useState<TeamMember[]>(() => {
-    const savedMembers = localStorage.getItem('team_members');
-    
-    if (savedMembers) {
-      return JSON.parse(savedMembers);
-    }
-    
-    // Default team members from TeamSection
-    return [
-      {
-        id: "1",
-        name: "Alex Johnson",
-        position: "President",
-        imageSrc: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=761&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "twitter", url: "#" },
-          { icon: "instagram", url: "#" }
-        ]
-      },
-      {
-        id: "2",
-        name: "Sophia Martinez",
-        position: "Vice President",
-        imageSrc: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "twitter", url: "#" }
-        ]
-      },
-      {
-        id: "3",
-        name: "David Chen",
-        position: "Secretary",
-        imageSrc: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=769&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "instagram", url: "#" }
-        ]
-      },
-      {
-        id: "4",
-        name: "Emma Wilson",
-        position: "Treasurer",
-        imageSrc: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "twitter", url: "#" }
-        ]
-      },
-      {
-        id: "5",
-        name: "Michael Rodriguez",
-        position: "Marketing Lead",
-        imageSrc: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "instagram", url: "#" }
-        ]
-      },
-      {
-        id: "6",
-        name: "Jessica Kim",
-        position: "Events Coordinator",
-        imageSrc: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-        socialLinks: [
-          { icon: "linkedin", url: "#" },
-          { icon: "twitter", url: "#" }
-        ]
-      }
-    ];
-  });
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [formData, setFormData] = useState({
@@ -115,12 +45,199 @@ const AdminMembers: React.FC = () => {
     instagramUrl: '',
     facebookUrl: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    localStorage.setItem('team_members', JSON.stringify(members));
-  }, [members]);
+  // Fetch team members from Supabase
+  const fetchTeamMembers = async (): Promise<TeamMember[]> => {
+    const { data: members, error } = await supabase
+      .from('team_members')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Error fetching team members: ${error.message}`);
+    }
+
+    // Fetch social links for each member
+    const membersWithLinks = await Promise.all(
+      members.map(async (member) => {
+        const { data: socialLinks, error: linksError } = await supabase
+          .from('member_social_links')
+          .select('*')
+          .eq('member_id', member.id);
+
+        if (linksError) {
+          console.error(`Error fetching social links for member ${member.id}:`, linksError);
+          return { ...member, socialLinks: [] };
+        }
+
+        return {
+          ...member,
+          socialLinks: socialLinks || []
+        };
+      })
+    );
+
+    return membersWithLinks;
+  };
+
+  const { data: members = [], isLoading, error } = useQuery({
+    queryKey: ['team-members'],
+    queryFn: fetchTeamMembers
+  });
+
+  // Add a new team member
+  const addMemberMutation = useMutation({
+    mutationFn: async (newMember: Omit<TeamMember, 'id' | 'socialLinks'> & { socialLinks: Omit<SocialLink, 'id'>[] }) => {
+      // First insert the member
+      const { data: memberData, error: memberError } = await supabase
+        .from('team_members')
+        .insert({
+          name: newMember.name,
+          position: newMember.position,
+          image_url: newMember.image_url
+        })
+        .select()
+        .single();
+
+      if (memberError) {
+        throw new Error(`Error adding team member: ${memberError.message}`);
+      }
+
+      // Then insert social links if any
+      if (newMember.socialLinks.length > 0) {
+        const socialLinksToInsert = newMember.socialLinks.map(link => ({
+          member_id: memberData.id,
+          icon: link.icon,
+          url: link.url
+        }));
+
+        const { error: linksError } = await supabase
+          .from('member_social_links')
+          .insert(socialLinksToInsert);
+
+        if (linksError) {
+          throw new Error(`Error adding social links: ${linksError.message}`);
+        }
+      }
+
+      return memberData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Member added",
+        description: "Team member has been added successfully."
+      });
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to add team member."
+      });
+    }
+  });
+
+  // Update an existing team member
+  const updateMemberMutation = useMutation({
+    mutationFn: async (updatedMember: TeamMember) => {
+      // First update the member data
+      const { error: memberError } = await supabase
+        .from('team_members')
+        .update({
+          name: updatedMember.name,
+          position: updatedMember.position,
+          image_url: updatedMember.image_url
+        })
+        .eq('id', updatedMember.id);
+
+      if (memberError) {
+        throw new Error(`Error updating team member: ${memberError.message}`);
+      }
+
+      // Delete all existing social links for this member
+      const { error: deleteError } = await supabase
+        .from('member_social_links')
+        .delete()
+        .eq('member_id', updatedMember.id);
+
+      if (deleteError) {
+        throw new Error(`Error deleting old social links: ${deleteError.message}`);
+      }
+
+      // Insert new social links if any
+      if (updatedMember.socialLinks.length > 0) {
+        const socialLinksToInsert = updatedMember.socialLinks.map(link => ({
+          member_id: updatedMember.id,
+          icon: link.icon,
+          url: link.url
+        }));
+
+        const { error: linksError } = await supabase
+          .from('member_social_links')
+          .insert(socialLinksToInsert);
+
+        if (linksError) {
+          throw new Error(`Error adding updated social links: ${linksError.message}`);
+        }
+      }
+
+      return updatedMember;
+    },
+    onSuccess: (updatedMember) => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Member updated",
+        description: `${updatedMember.name}'s information has been updated.`
+      });
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to update team member."
+      });
+    }
+  });
+
+  // Delete a team member
+  const deleteMemberMutation = useMutation({
+    mutationFn: async (id: string) => {
+      // The member_social_links will be automatically deleted due to CASCADE
+      const { error } = await supabase
+        .from('team_members')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw new Error(`Error deleting team member: ${error.message}`);
+      }
+
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+      toast({
+        title: "Member deleted",
+        description: "Team member has been removed successfully."
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete team member."
+      });
+    }
+  });
 
   const resetForm = () => {
     setFormData({
@@ -147,7 +264,7 @@ const AdminMembers: React.FC = () => {
     const formData = {
       name: member.name,
       position: member.position,
-      imageSrc: member.imageSrc,
+      imageSrc: member.image_url,
       linkedinUrl: member.socialLinks.find(link => link.icon === 'linkedin')?.url || '',
       twitterUrl: member.socialLinks.find(link => link.icon === 'twitter')?.url || '',
       instagramUrl: member.socialLinks.find(link => link.icon === 'instagram')?.url || '',
@@ -160,53 +277,54 @@ const AdminMembers: React.FC = () => {
 
   const handleDeleteMember = (id: string) => {
     if (confirm('Are you sure you want to delete this team member?')) {
-      setMembers(members.filter(member => member.id !== id));
-      toast({
-        title: "Member deleted",
-        description: "Team member has been removed successfully."
-      });
+      deleteMemberMutation.mutate(id);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    const socialLinks: SocialLink[] = [];
+    const socialLinks: Omit<SocialLink, 'id'>[] = [];
     
     if (formData.linkedinUrl) socialLinks.push({ icon: 'linkedin', url: formData.linkedinUrl });
     if (formData.twitterUrl) socialLinks.push({ icon: 'twitter', url: formData.twitterUrl });
     if (formData.instagramUrl) socialLinks.push({ icon: 'instagram', url: formData.instagramUrl });
     if (formData.facebookUrl) socialLinks.push({ icon: 'facebook', url: formData.facebookUrl });
     
-    const newMember: TeamMember = {
-      id: editingMember ? editingMember.id : Date.now().toString(),
-      name: formData.name,
-      position: formData.position,
-      imageSrc: formData.imageSrc,
-      socialLinks
-    };
-    
     if (editingMember) {
       // Update existing member
-      setMembers(members.map(member => 
-        member.id === editingMember.id ? newMember : member
-      ));
-      toast({
-        title: "Member updated",
-        description: `${newMember.name}'s information has been updated.`
+      updateMemberMutation.mutate({
+        id: editingMember.id,
+        name: formData.name,
+        position: formData.position,
+        image_url: formData.imageSrc,
+        socialLinks
       });
     } else {
       // Add new member
-      setMembers([...members, newMember]);
-      toast({
-        title: "Member added",
-        description: `${newMember.name} has been added to the team.`
+      addMemberMutation.mutate({
+        name: formData.name,
+        position: formData.position,
+        image_url: formData.imageSrc,
+        socialLinks
       });
     }
-    
-    setIsDialogOpen(false);
-    resetForm();
   };
+
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-destructive">Error loading team members: {error instanceof Error ? error.message : 'Unknown error'}</p>
+        <Button 
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['team-members'] })}
+          className="mt-4"
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -327,64 +445,92 @@ const AdminMembers: React.FC = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">{editingMember ? 'Update' : 'Add'} Member</Button>
+                <Button type="submit" disabled={isSubmitting || addMemberMutation.isPending || updateMemberMutation.isPending}>
+                  {isSubmitting ? "Saving..." : editingMember ? 'Update' : 'Add'} Member
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {members.map((member) => (
-          <Card key={member.id} className="overflow-hidden">
-            <div className="relative">
-              <ImageWithFallback
-                src={member.imageSrc}
-                alt={member.name}
-                className="w-full h-64 object-cover"
-              />
-              <div className="absolute top-2 right-2 flex gap-2">
-                <Button 
-                  variant="default" 
-                  size="icon" 
-                  className="h-8 w-8 bg-primary/80 hover:bg-primary"
-                  onClick={() => handleEditMember(member)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  size="icon" 
-                  className="h-8 w-8 bg-destructive/80 hover:bg-destructive"
-                  onClick={() => handleDeleteMember(member.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <h3 className="text-lg font-semibold">{member.name}</h3>
-              <p className="text-muted-foreground text-sm mb-3">{member.position}</p>
-              
-              <div className="flex gap-2">
-                {member.socialLinks.map((link, index) => (
+      {isLoading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((n) => (
+            <Card key={n} className="overflow-hidden">
+              <div className="h-64 bg-gray-200 animate-pulse" />
+              <CardContent className="p-4">
+                <div className="h-6 bg-gray-200 animate-pulse rounded mb-2" />
+                <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3 mb-3" />
+                <div className="flex gap-2">
+                  <div className="h-8 w-8 bg-gray-200 animate-pulse rounded-full" />
+                  <div className="h-8 w-8 bg-gray-200 animate-pulse rounded-full" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : members.length === 0 ? (
+        <div className="text-center p-8">
+          <p className="text-muted-foreground mb-4">No team members found. Add your first team member!</p>
+          <Button onClick={handleAddMember}>
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add Team Member
+          </Button>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {members.map((member) => (
+            <Card key={member.id} className="overflow-hidden">
+              <div className="relative">
+                <ImageWithFallback
+                  src={member.image_url}
+                  alt={member.name}
+                  className="w-full h-64 object-cover"
+                />
+                <div className="absolute top-2 right-2 flex gap-2">
                   <Button 
-                    key={index} 
-                    variant="outline" 
+                    variant="default" 
                     size="icon" 
-                    className="h-8 w-8 rounded-full"
-                    asChild
+                    className="h-8 w-8 bg-primary/80 hover:bg-primary"
+                    onClick={() => handleEditMember(member)}
                   >
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">
-                      <i className={`fab fa-${link.icon}`}></i>
-                    </a>
+                    <Edit className="h-4 w-4" />
                   </Button>
-                ))}
+                  <Button 
+                    variant="destructive" 
+                    size="icon" 
+                    className="h-8 w-8 bg-destructive/80 hover:bg-destructive"
+                    onClick={() => handleDeleteMember(member.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              <CardContent className="p-4">
+                <h3 className="text-lg font-semibold">{member.name}</h3>
+                <p className="text-muted-foreground text-sm mb-3">{member.position}</p>
+                
+                <div className="flex gap-2">
+                  {member.socialLinks.map((link, index) => (
+                    <Button 
+                      key={index} 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-8 w-8 rounded-full"
+                      asChild
+                    >
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <i className={`fab fa-${link.icon}`}></i>
+                      </a>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

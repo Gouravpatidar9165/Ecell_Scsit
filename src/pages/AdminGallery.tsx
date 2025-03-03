@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,49 +17,18 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash2, Edit, PlusCircle, Calendar } from "lucide-react";
 import ImageWithFallback from '@/components/ImageWithFallback';
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface GalleryItem {
   id: string;
   title: string;
   description: string;
   date: string;
-  imageSrc: string;
+  image_url: string;
 }
 
 const AdminGallery: React.FC = () => {
-  const [gallery, setGallery] = useState<GalleryItem[]>(() => {
-    const savedGallery = localStorage.getItem('gallery_items');
-    
-    if (savedGallery) {
-      return JSON.parse(savedGallery);
-    }
-    
-    // Default gallery items
-    return [
-      {
-        id: "1",
-        title: "Entrepreneurship Summit 2023",
-        description: "Annual flagship event featuring renowned speakers and workshops",
-        date: "2023-10-15",
-        imageSrc: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-      },
-      {
-        id: "2",
-        title: "Startup Pitch Competition",
-        description: "Students presenting innovative business ideas to industry experts",
-        date: "2023-09-22",
-        imageSrc: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-      },
-      {
-        id: "3",
-        title: "Business Plan Workshop",
-        description: "Interactive session on creating effective business plans",
-        date: "2023-08-10",
-        imageSrc: "https://images.unsplash.com/photo-1577412647305-991150c7d163?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-      }
-    ];
-  });
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
   const [formData, setFormData] = useState({
@@ -68,12 +37,137 @@ const AdminGallery: React.FC = () => {
     date: '',
     imageSrc: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    localStorage.setItem('gallery_items', JSON.stringify(gallery));
-  }, [gallery]);
+  // Fetch gallery items from Supabase
+  const fetchGalleryItems = async (): Promise<GalleryItem[]> => {
+    const { data, error } = await supabase
+      .from('gallery_items')
+      .select('*')
+      .order('date', { ascending: false });
+
+    if (error) {
+      throw new Error(`Error fetching gallery items: ${error.message}`);
+    }
+
+    return data.map(item => ({
+      ...item,
+      image_url: item.image_url
+    }));
+  };
+
+  const { data: galleryItems = [], isLoading, error } = useQuery({
+    queryKey: ['gallery-items'],
+    queryFn: fetchGalleryItems
+  });
+
+  // Add a new gallery item
+  const addItemMutation = useMutation({
+    mutationFn: async (newItem: Omit<GalleryItem, 'id'>) => {
+      const { data, error } = await supabase
+        .from('gallery_items')
+        .insert({
+          title: newItem.title,
+          description: newItem.description,
+          date: newItem.date,
+          image_url: newItem.image_url
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Error adding gallery item: ${error.message}`);
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
+      toast({
+        title: "Item added",
+        description: "Gallery item has been added successfully."
+      });
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to add gallery item."
+      });
+    }
+  });
+
+  // Update an existing gallery item
+  const updateItemMutation = useMutation({
+    mutationFn: async (updatedItem: GalleryItem) => {
+      const { error } = await supabase
+        .from('gallery_items')
+        .update({
+          title: updatedItem.title,
+          description: updatedItem.description,
+          date: updatedItem.date,
+          image_url: updatedItem.image_url
+        })
+        .eq('id', updatedItem.id);
+
+      if (error) {
+        throw new Error(`Error updating gallery item: ${error.message}`);
+      }
+
+      return updatedItem;
+    },
+    onSuccess: (updatedItem) => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
+      toast({
+        title: "Item updated",
+        description: `"${updatedItem.title}" has been updated.`
+      });
+      setIsDialogOpen(false);
+      resetForm();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to update gallery item."
+      });
+    }
+  });
+
+  // Delete a gallery item
+  const deleteItemMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('gallery_items')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw new Error(`Error deleting gallery item: ${error.message}`);
+      }
+
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gallery-items'] });
+      toast({
+        title: "Item deleted",
+        description: "Gallery item has been removed successfully."
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to delete gallery item."
+      });
+    }
+  });
 
   const resetForm = () => {
     setFormData({
@@ -98,7 +192,7 @@ const AdminGallery: React.FC = () => {
       title: item.title,
       description: item.description,
       date: item.date,
-      imageSrc: item.imageSrc
+      imageSrc: item.image_url
     });
     
     setIsDialogOpen(true);
@@ -106,51 +200,52 @@ const AdminGallery: React.FC = () => {
 
   const handleDeleteItem = (id: string) => {
     if (confirm('Are you sure you want to delete this gallery item?')) {
-      setGallery(gallery.filter(item => item.id !== id));
-      toast({
-        title: "Item deleted",
-        description: "Gallery item has been removed successfully."
-      });
+      deleteItemMutation.mutate(id);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newItem: GalleryItem = {
-      id: editingItem ? editingItem.id : Date.now().toString(),
-      title: formData.title,
-      description: formData.description,
-      date: formData.date,
-      imageSrc: formData.imageSrc
-    };
+    setIsSubmitting(true);
     
     if (editingItem) {
       // Update existing item
-      setGallery(gallery.map(item => 
-        item.id === editingItem.id ? newItem : item
-      ));
-      toast({
-        title: "Item updated",
-        description: `"${newItem.title}" has been updated.`
+      updateItemMutation.mutate({
+        id: editingItem.id,
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        image_url: formData.imageSrc
       });
     } else {
       // Add new item
-      setGallery([...gallery, newItem]);
-      toast({
-        title: "Item added",
-        description: `"${newItem.title}" has been added to the gallery.`
+      addItemMutation.mutate({
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        image_url: formData.imageSrc
       });
     }
-    
-    setIsDialogOpen(false);
-    resetForm();
   };
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-destructive">Error loading gallery items: {error instanceof Error ? error.message : 'Unknown error'}</p>
+        <Button 
+          onClick={() => queryClient.invalidateQueries({ queryKey: ['gallery-items'] })}
+          className="mt-4"
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -227,55 +322,79 @@ const AdminGallery: React.FC = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">{editingItem ? 'Update' : 'Add'} Item</Button>
+                <Button type="submit" disabled={isSubmitting || addItemMutation.isPending || updateItemMutation.isPending}>
+                  {isSubmitting ? "Saving..." : editingItem ? 'Update' : 'Add'} Item
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {gallery.map((item) => (
-          <Card key={item.id} className="overflow-hidden group">
-            <div className="relative h-64 overflow-hidden">
-              <ImageWithFallback
-                src={item.imageSrc}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button 
-                  variant="default" 
-                  size="icon" 
-                  className="h-8 w-8 bg-primary/80 hover:bg-primary"
-                  onClick={() => handleEditItem(item)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  size="icon" 
-                  className="h-8 w-8 bg-destructive/80 hover:bg-destructive"
-                  onClick={() => handleDeleteItem(item.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+      {isLoading ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((n) => (
+            <Card key={n} className="overflow-hidden">
+              <div className="h-64 bg-gray-200 animate-pulse" />
+              <CardContent className="p-4">
+                <div className="h-6 bg-gray-200 animate-pulse rounded mb-2" />
+                <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : galleryItems.length === 0 ? (
+        <div className="text-center p-8">
+          <p className="text-muted-foreground mb-4">No gallery items found. Add your first event!</p>
+          <Button onClick={handleAddItem}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Event
+          </Button>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {galleryItems.map((item) => (
+            <Card key={item.id} className="overflow-hidden group">
+              <div className="relative h-64 overflow-hidden">
+                <ImageWithFallback
+                  src={item.image_url}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    variant="default" 
+                    size="icon" 
+                    className="h-8 w-8 bg-primary/80 hover:bg-primary"
+                    onClick={() => handleEditItem(item)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="icon" 
+                    className="h-8 w-8 bg-destructive/80 hover:bg-destructive"
+                    onClick={() => handleDeleteItem(item.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
+                  <h3 className="text-white font-semibold text-lg truncate">{item.title}</h3>
+                  <p className="text-white/80 text-sm line-clamp-2">{item.description}</p>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform">
-                <h3 className="text-white font-semibold text-lg truncate">{item.title}</h3>
-                <p className="text-white/80 text-sm line-clamp-2">{item.description}</p>
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="flex items-center text-muted-foreground">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span className="text-sm">{formatDate(item.date)}</span>
-              </div>
-              <h3 className="font-semibold mt-1">{item.title}</h3>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              <CardContent className="p-4">
+                <div className="flex items-center text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span className="text-sm">{formatDate(item.date)}</span>
+                </div>
+                <h3 className="font-semibold mt-1">{item.title}</h3>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

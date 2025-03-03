@@ -9,7 +9,95 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      gallery_items: {
+        Row: {
+          created_at: string | null
+          date: string
+          description: string
+          id: string
+          image_url: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          description: string
+          id?: string
+          image_url: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          description?: string
+          id?: string
+          image_url?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      member_social_links: {
+        Row: {
+          created_at: string | null
+          icon: string
+          id: string
+          member_id: string
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon: string
+          id?: string
+          member_id: string
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string
+          id?: string
+          member_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_social_links_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          name: string
+          position: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          name: string
+          position: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          name?: string
+          position?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
