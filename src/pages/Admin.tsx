@@ -15,7 +15,7 @@ const useAuth = () => {
 
   const login = (password: string) => {
     // In a real application, you would validate against a backend
-    const isValid = password === 'admin123'; // Default password for demo
+    const isValid = password === 'Gourav91'; // Updated password
     if (isValid) {
       localStorage.setItem('admin_authenticated', 'true');
       setIsAuthenticated(true);
