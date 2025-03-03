@@ -1,7 +1,20 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import ImageWithFallback from './ImageWithFallback';
+
+interface SocialLink {
+  icon: string;
+  url: string;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  position: string;
+  imageSrc: string;
+  socialLinks: SocialLink[];
+}
 
 interface TeamMemberProps {
   name: string;
@@ -47,63 +60,81 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
 };
 
 const TeamSection: React.FC = () => {
-  const teamMembers = [
-    {
-      name: "Alex Johnson",
-      position: "President",
-      imageSrc: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=761&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" },
-        { icon: "instagram", url: "#" }
-      ]
-    },
-    {
-      name: "Sophia Martinez",
-      position: "Vice President",
-      imageSrc: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" }
-      ]
-    },
-    {
-      name: "David Chen",
-      position: "Secretary",
-      imageSrc: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=769&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "instagram", url: "#" }
-      ]
-    },
-    {
-      name: "Emma Wilson",
-      position: "Treasurer",
-      imageSrc: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" }
-      ]
-    },
-    {
-      name: "Michael Rodriguez",
-      position: "Marketing Lead",
-      imageSrc: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "instagram", url: "#" }
-      ]
-    },
-    {
-      name: "Jessica Kim",
-      position: "Events Coordinator",
-      imageSrc: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" }
-      ]
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    // Load team members from localStorage
+    const savedMembers = localStorage.getItem('team_members');
+    
+    if (savedMembers) {
+      setTeamMembers(JSON.parse(savedMembers));
+    } else {
+      // Default team members if none in localStorage
+      setTeamMembers([
+        {
+          id: "1",
+          name: "Alex Johnson",
+          position: "President",
+          imageSrc: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=761&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "twitter", url: "#" },
+            { icon: "instagram", url: "#" }
+          ]
+        },
+        {
+          id: "2",
+          name: "Sophia Martinez",
+          position: "Vice President",
+          imageSrc: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "twitter", url: "#" }
+          ]
+        },
+        {
+          id: "3",
+          name: "David Chen",
+          position: "Secretary",
+          imageSrc: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=769&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "instagram", url: "#" }
+          ]
+        },
+        {
+          id: "4",
+          name: "Emma Wilson",
+          position: "Treasurer",
+          imageSrc: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "twitter", url: "#" }
+          ]
+        },
+        {
+          id: "5",
+          name: "Michael Rodriguez",
+          position: "Marketing Lead",
+          imageSrc: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "instagram", url: "#" }
+          ]
+        },
+        {
+          id: "6",
+          name: "Jessica Kim",
+          position: "Events Coordinator",
+          imageSrc: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
+          socialLinks: [
+            { icon: "linkedin", url: "#" },
+            { icon: "twitter", url: "#" }
+          ]
+        }
+      ]);
     }
-  ];
+  }, []);
 
   return (
     <section id="team" className="py-24 px-4 bg-secondary/30">
@@ -127,7 +158,7 @@ const TeamSection: React.FC = () => {
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
           {teamMembers.map((member, index) => (
             <TeamMember
-              key={index}
+              key={member.id}
               name={member.name}
               position={member.position}
               imageSrc={member.imageSrc}

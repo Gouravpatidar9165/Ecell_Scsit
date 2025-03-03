@@ -6,6 +6,7 @@ import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
 import InitiativesSection from '@/components/InitiativesSection';
 import TeamSection from '@/components/TeamSection';
+import EventGallery from '@/components/EventGallery';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 
@@ -28,6 +29,7 @@ const Index: React.FC = () => {
       <AboutSection />
       <InitiativesSection />
       <TeamSection />
+      <EventGallery />
       <ContactSection />
       <Footer />
       <Toaster />
