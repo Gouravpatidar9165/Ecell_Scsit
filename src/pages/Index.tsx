@@ -24,7 +24,7 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background text-foreground tech-gradient">
+    <main className="min-h-screen bg-background text-white tech-gradient">
       <Navbar />
       <HeroSection />
       <InfoBulletin />
