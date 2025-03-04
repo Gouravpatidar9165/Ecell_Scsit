@@ -48,7 +48,7 @@ const InfoBulletin: React.FC = () => {
               bulletinItems.map((item: BulletinItem) => (
                 <Card key={item.id} className="overflow-hidden border border-primary/10 bg-white/10 backdrop-blur-lg shadow-lg">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-xl text-white">{item.title}</CardTitle>
+                    <CardTitle className="text-xl text-blue-300">{item.title}</CardTitle>
                     <CardDescription className="text-sm text-sky-200">
                       {new Date(item.created_at).toLocaleDateString()}
                     </CardDescription>

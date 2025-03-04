@@ -22,8 +22,8 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({ title, description, ima
           />
         </div>
         <div className="p-6">
-          <h3 className="text-xl font-semibold mb-3">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
+          <h3 className="text-xl font-semibold mb-3 text-blue-600">{title}</h3>
+          <p className="text-gray-700 dark:text-gray-300">{description}</p>
         </div>
       </div>
     </RevealAnimation>

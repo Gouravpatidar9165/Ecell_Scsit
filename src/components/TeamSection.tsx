@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import ImageWithFallback from './ImageWithFallback';
@@ -49,8 +50,8 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
           />
         </div>
         <div className="p-5 text-center">
-          <h3 className="text-xl font-semibold mb-1">{name}</h3>
-          <p className="text-muted-foreground text-sm mb-3">{position}</p>
+          <h3 className="text-xl font-semibold mb-1 text-primary">{name}</h3>
+          <p className="text-blue-500 text-sm mb-3 font-medium">{position}</p>
           
           <div className="flex justify-center space-x-3">
             {socialLinks.map((link, index) => (

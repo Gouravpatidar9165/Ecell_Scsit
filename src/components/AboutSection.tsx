@@ -28,13 +28,13 @@ const AboutSection: React.FC = () => {
           
           <div className="space-y-6">
             <RevealAnimation delay={300}>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-white">
                 The Entrepreneurship Cell (E-Cell) is a student-run organization dedicated to promoting the spirit of entrepreneurship among students. We provide a platform for aspiring entrepreneurs to transform their innovative ideas into successful ventures.
               </p>
             </RevealAnimation>
             
             <RevealAnimation delay={400}>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-white">
                 Through workshops, speaker sessions, mentorship programs, and competitions, we aim to equip students with the knowledge, skills, and network necessary to thrive in the entrepreneurial ecosystem.
               </p>
             </RevealAnimation>
@@ -42,20 +42,20 @@ const AboutSection: React.FC = () => {
             <RevealAnimation delay={500}>
               <div className="pt-4 grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-primary">50+</h3>
-                  <p className="text-sm text-muted-foreground">Events Organized</p>
+                  <h3 className="text-5xl font-bold text-blue-400">50+</h3>
+                  <p className="text-sm text-sky-200 font-medium">Events Organized</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-primary">5000+</h3>
-                  <p className="text-sm text-muted-foreground">Students Impacted</p>
+                  <h3 className="text-5xl font-bold text-blue-400">5000+</h3>
+                  <p className="text-sm text-sky-200 font-medium">Students Impacted</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-primary">20+</h3>
-                  <p className="text-sm text-muted-foreground">Startups Incubated</p>
+                  <h3 className="text-5xl font-bold text-blue-400">20+</h3>
+                  <p className="text-sm text-sky-200 font-medium">Startups Incubated</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-primary">100+</h3>
-                  <p className="text-sm text-muted-foreground">Industry Partners</p>
+                  <h3 className="text-5xl font-bold text-blue-400">100+</h3>
+                  <p className="text-sm text-sky-200 font-medium">Industry Partners</p>
                 </div>
               </div>
             </RevealAnimation>
