@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import AdminMembers from './AdminMembers';
 import AdminGallery from './AdminGallery';
+import AdminBulletin from './AdminBulletin';
 import AdminLogin from './AdminLogin';
 
 // Simple auth management - in a real app, use a proper auth system
@@ -59,7 +60,7 @@ const AdminPanel: React.FC = () => {
   const showNav = isAuthenticated && location.pathname !== '/admin/login';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background tech-gradient">
       {showNav && (
         <nav className="bg-primary text-primary-foreground p-4">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -80,6 +81,12 @@ const AdminPanel: React.FC = () => {
                   className={`px-3 py-2 rounded-md ${location.pathname === '/admin/gallery' ? 'bg-white/20' : 'hover:bg-white/10'}`}
                 >
                   Gallery
+                </Link>
+                <Link 
+                  to="/admin/bulletin" 
+                  className={`px-3 py-2 rounded-md ${location.pathname === '/admin/bulletin' ? 'bg-white/20' : 'hover:bg-white/10'}`}
+                >
+                  Announcements
                 </Link>
               </div>
             </div>
@@ -105,6 +112,11 @@ const AdminPanel: React.FC = () => {
           <Route path="/gallery" element={
             <ProtectedRoute>
               <AdminGallery />
+            </ProtectedRoute>
+          } />
+          <Route path="/bulletin" element={
+            <ProtectedRoute>
+              <AdminBulletin />
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/admin/members" replace />} />

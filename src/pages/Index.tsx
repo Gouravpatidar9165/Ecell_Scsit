@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
 import InitiativesSection from '@/components/InitiativesSection';
+import InfoBulletin from '@/components/InfoBulletin';
 import TeamSection from '@/components/TeamSection';
 import EventGallery from '@/components/EventGallery';
 import ContactSection from '@/components/ContactSection';
@@ -23,9 +24,10 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground tech-gradient">
       <Navbar />
       <HeroSection />
+      <InfoBulletin />
       <AboutSection />
       <InitiativesSection />
       <TeamSection />
