@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -15,14 +16,19 @@ const Footer: React.FC = () => {
               Empowering students to innovate and lead through entrepreneurship.
             </p>
             <div className="flex space-x-4">
-              {["twitter", "facebook", "instagram", "linkedin"].map((social) => (
+              {[
+                { name: "twitter", icon: <Twitter size={20} />, color: "bg-[#1DA1F2]" },
+                { name: "facebook", icon: <Facebook size={20} />, color: "bg-[#1877F2]" },
+                { name: "instagram", icon: <Instagram size={20} />, color: "bg-[#E4405F]" },
+                { name: "linkedin", icon: <Linkedin size={20} />, color: "bg-[#0A66C2]" }
+              ].map((social) => (
                 <a
-                  key={social}
+                  key={social.name}
                   href="#"
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary hover:bg-primary hover:text-white transition-colors duration-300"
-                  aria-label={social}
+                  className={`w-10 h-10 flex items-center justify-center rounded-full ${social.color} text-white hover:opacity-90 transition-opacity duration-300`}
+                  aria-label={social.name}
                 >
-                  <i className={`fab fa-${social}`}></i>
+                  {social.icon}
                 </a>
               ))}
             </div>

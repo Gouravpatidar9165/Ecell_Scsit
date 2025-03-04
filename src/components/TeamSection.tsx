@@ -26,6 +26,18 @@ interface TeamMemberProps {
 }
 
 const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socialLinks, delay = 0 }) => {
+  // Function to get the appropriate icon color based on the platform
+  const getSocialIconColor = (platform: string) => {
+    switch (platform) {
+      case 'linkedin': return 'bg-[#0A66C2]';
+      case 'twitter': return 'bg-[#1DA1F2]';
+      case 'instagram': return 'bg-[#E4405F]';
+      case 'facebook': return 'bg-[#1877F2]';
+      case 'github': return 'bg-[#171515]';
+      default: return 'bg-[#6e5494]';
+    }
+  };
+
   return (
     <RevealAnimation delay={delay} className="h-full">
       <div className="team-card relative bg-white dark:bg-black rounded-lg overflow-hidden h-full">
@@ -47,7 +59,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-secondary hover:bg-primary hover:text-white transition-colors duration-300"
+                className={`w-8 h-8 flex items-center justify-center rounded-full ${getSocialIconColor(link.icon)} text-white hover:opacity-90 transition-opacity duration-300`}
                 aria-label={`${name}'s ${link.icon}`}
               >
                 <i className={`fab fa-${link.icon}`}></i>

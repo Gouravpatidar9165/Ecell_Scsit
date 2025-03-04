@@ -49,7 +49,7 @@ const InfoBulletin: React.FC = () => {
                 <Card key={item.id} className="overflow-hidden border border-primary/10 bg-white/10 backdrop-blur-lg shadow-lg">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-white">{item.title}</CardTitle>
-                    <CardDescription className="text-sm text-gray-200">
+                    <CardDescription className="text-sm text-sky-200">
                       {new Date(item.created_at).toLocaleDateString()}
                     </CardDescription>
                   </CardHeader>
