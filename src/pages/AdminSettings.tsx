@@ -28,14 +28,20 @@ const AdminSettings: React.FC = () => {
         if (storedUsername) {
           setCurrentUsername(storedUsername);
           
+          // Query with array response instead of single to avoid errors when no results
           const { data, error } = await supabase
             .from('admin_credentials')
             .select('id')
-            .eq('username', storedUsername)
-            .single();
+            .eq('username', storedUsername);
           
           if (error) throw error;
-          if (data) setAdminId(data.id);
+          
+          // Check if we got any results
+          if (data && data.length > 0) {
+            setAdminId(data[0].id);
+          } else {
+            console.log('No admin found with the stored username');
+          }
         }
       } catch (error) {
         console.error('Error fetching admin data:', error);
@@ -63,16 +69,16 @@ const AdminSettings: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Verify current credentials
+      // Verify current credentials - use array query instead of single()
       const { data: verifyData, error: verifyError } = await supabase
         .from('admin_credentials')
         .select('id, password')
-        .eq('username', currentUsername)
-        .single();
+        .eq('username', currentUsername);
       
       if (verifyError) throw verifyError;
       
-      if (!verifyData || verifyData.password !== currentPassword) {
+      // Check if we have valid data and matching password
+      if (!verifyData || verifyData.length === 0 || verifyData[0].password !== currentPassword) {
         toast({
           variant: "destructive",
           title: "Authentication failed",
@@ -81,6 +87,9 @@ const AdminSettings: React.FC = () => {
         setIsLoading(false);
         return;
       }
+      
+      // Get admin ID from the query results
+      const adminIdFromQuery = verifyData[0].id;
       
       // Update credentials
       const updates: { username?: string; password?: string } = {};
@@ -93,11 +102,11 @@ const AdminSettings: React.FC = () => {
         updates.password = newPassword;
       }
       
-      if (Object.keys(updates).length > 0 && adminId) {
+      if (Object.keys(updates).length > 0) {
         const { error: updateError } = await supabase
           .from('admin_credentials')
           .update(updates)
-          .eq('id', adminId);
+          .eq('id', adminIdFromQuery);
         
         if (updateError) throw updateError;
         

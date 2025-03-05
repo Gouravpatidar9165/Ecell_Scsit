@@ -20,17 +20,16 @@ const AdminLogin: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Fetch admin credentials from the database
+      // Fetch admin credentials from the database - use array query instead of single()
       const { data, error } = await supabase
         .from('admin_credentials')
         .select('username, password')
-        .eq('username', username)
-        .single();
+        .eq('username', username);
       
       if (error) throw error;
       
       // Check if password matches
-      const isValid = data && data.password === password;
+      const isValid = data && data.length > 0 && data[0].password === password;
       
       if (isValid) {
         localStorage.setItem('admin_authenticated', 'true');
