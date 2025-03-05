@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ const AdminGallery: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
@@ -75,11 +76,23 @@ const AdminGallery: React.FC = () => {
     try {
       setIsUploading(true);
       setUploadProgress(0);
+      setUploadError(null);
 
       // Create a unique file name
       const fileExt = file.name.split('.').pop();
       const fileName = `gallery_${Date.now()}.${fileExt}`;
       const filePath = `gallery/${fileName}`;
+
+      // Upload progress simulation
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(interval);
+            return 95;
+          }
+          return prev + 5;
+        });
+      }, 100);
 
       // Upload the file to Supabase Storage
       const { data, error } = await supabase.storage
@@ -90,6 +103,9 @@ const AdminGallery: React.FC = () => {
         });
 
       if (error) throw error;
+
+      clearInterval(interval);
+      setUploadProgress(100);
 
       // Get public URL for the uploaded file
       const { data: { publicUrl } } = supabase.storage
@@ -108,6 +124,7 @@ const AdminGallery: React.FC = () => {
 
     } catch (error) {
       console.error('Error uploading file:', error);
+      setUploadError(error instanceof Error ? error.message : "An unknown error occurred");
       toast({
         variant: "destructive",
         title: "Upload failed",
@@ -233,6 +250,8 @@ const AdminGallery: React.FC = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    setUploadProgress(0);
+    setUploadError(null);
   };
 
   const handleAddItem = () => {
@@ -394,8 +413,15 @@ const AdminGallery: React.FC = () => {
                     
                     {isUploading && (
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div className="bg-primary h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                        <div 
+                          className="bg-primary h-2.5 rounded-full transition-all duration-300" 
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
                       </div>
+                    )}
+                    
+                    {uploadError && (
+                      <p className="text-sm text-destructive">{uploadError}</p>
                     )}
                     
                     {formData.imageSrc && !isUploading && (
