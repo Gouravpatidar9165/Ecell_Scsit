@@ -7,6 +7,7 @@ import AdminMembers from './AdminMembers';
 import AdminGallery from './AdminGallery';
 import AdminBulletin from './AdminBulletin';
 import AdminLogin from './AdminLogin';
+import AdminSettings from './AdminSettings';
 
 // Simple auth management - in a real app, use a proper auth system
 const useAuth = () => {
@@ -14,22 +15,13 @@ const useAuth = () => {
     return localStorage.getItem('admin_authenticated') === 'true';
   });
 
-  const login = (password: string) => {
-    // In a real application, you would validate against a backend
-    const isValid = password === 'Gourav91'; // Updated password
-    if (isValid) {
-      localStorage.setItem('admin_authenticated', 'true');
-      setIsAuthenticated(true);
-    }
-    return isValid;
-  };
-
   const logout = () => {
     localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('admin_username');
     setIsAuthenticated(false);
   };
 
-  return { isAuthenticated, login, logout };
+  return { isAuthenticated, logout };
 };
 
 // Protected route component
@@ -88,6 +80,12 @@ const AdminPanel: React.FC = () => {
                 >
                   Announcements
                 </Link>
+                <Link 
+                  to="/admin/settings" 
+                  className={`px-3 py-2 rounded-md ${location.pathname === '/admin/settings' ? 'bg-white/20' : 'hover:bg-white/10'}`}
+                >
+                  Settings
+                </Link>
               </div>
             </div>
             
@@ -117,6 +115,11 @@ const AdminPanel: React.FC = () => {
           <Route path="/bulletin" element={
             <ProtectedRoute>
               <AdminBulletin />
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <AdminSettings />
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/admin/members" replace />} />
