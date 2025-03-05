@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2, Edit, UserPlus, Link as LinkIcon } from "lucide-react";
+import { Trash2, Edit, UserPlus, Link as LinkIcon, Upload } from "lucide-react";
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -46,9 +46,63 @@ const AdminMembers: React.FC = () => {
     facebookUrl: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Handle file upload
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      // Create a unique file name
+      const fileExt = file.name.split('.').pop();
+      const fileName = `member_${Date.now()}.${fileExt}`;
+      const filePath = `members/${fileName}`;
+
+      // Upload the file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) throw error;
+
+      // Get public URL for the uploaded file
+      const { data: { publicUrl } } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(filePath);
+
+      setFormData({
+        ...formData,
+        imageSrc: publicUrl
+      });
+
+      toast({
+        title: "File uploaded",
+        description: "Image has been uploaded successfully."
+      });
+
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        variant: "destructive",
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Fetch team members from Supabase
   const fetchTeamMembers = async (): Promise<TeamMember[]> => {
@@ -249,6 +303,9 @@ const AdminMembers: React.FC = () => {
       instagramUrl: '',
       facebookUrl: ''
     });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleAddMember = () => {
@@ -372,18 +429,58 @@ const AdminMembers: React.FC = () => {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="imageSrc" className="text-right">
-                    Image URL
+                
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="imageUpload" className="text-right pt-2">
+                    Image
                   </Label>
-                  <Input
-                    id="imageSrc"
-                    value={formData.imageSrc}
-                    onChange={(e) => setFormData({...formData, imageSrc: e.target.value})}
-                    className="col-span-3"
-                    required
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <div className="col-span-3 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        ref={fileInputRef}
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        disabled={isUploading}
+                        className="flex-1"
+                      />
+                      <Button 
+                        type="button" 
+                        size="sm"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                      >
+                        <Upload className="h-4 w-4 mr-1" />
+                        Upload
+                      </Button>
+                    </div>
+                    
+                    {isUploading && (
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="bg-primary h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                      </div>
+                    )}
+                    
+                    {formData.imageSrc && !isUploading && (
+                      <div className="relative aspect-square w-32 overflow-hidden rounded-md border mx-auto mb-2">
+                        <img 
+                          src={formData.imageSrc} 
+                          alt="Preview" 
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <Input
+                      placeholder="Or enter image URL manually"
+                      value={formData.imageSrc}
+                      onChange={(e) => setFormData({...formData, imageSrc: e.target.value})}
+                      className="w-full"
+                      required={!formData.imageSrc}
+                    />
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -445,8 +542,8 @@ const AdminMembers: React.FC = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" disabled={isSubmitting || addMemberMutation.isPending || updateMemberMutation.isPending}>
-                  {isSubmitting ? "Saving..." : editingMember ? 'Update' : 'Add'} Member
+                <Button type="submit" disabled={isSubmitting || isUploading}>
+                  {isSubmitting || isUploading ? "Processing..." : editingMember ? 'Update' : 'Add'} Member
                 </Button>
               </DialogFooter>
             </form>
