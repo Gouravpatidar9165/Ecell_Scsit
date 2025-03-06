@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
 
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -128,10 +129,10 @@ const ContactSection: React.FC = () => {
           </div>
           
           <RevealAnimation delay={400}>
-            <div className="bg-white dark:bg-black rounded-lg p-6 md:p-8 shadow-lg">
+            <Card className="bg-background/95 dark:bg-background/90 backdrop-blur-sm border border-border/50 rounded-lg p-6 md:p-8 shadow-lg">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-base font-medium">
+                  <Label htmlFor="name" className="text-base font-medium text-foreground">
                     Name
                   </Label>
                   <Input
@@ -141,14 +142,14 @@ const ContactSection: React.FC = () => {
                     value={formState.name}
                     onChange={handleChange}
                     required
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary text-black dark:text-white"
                     placeholder="Your name"
                     autoComplete="name"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-base font-medium">
+                  <Label htmlFor="email" className="text-base font-medium text-foreground">
                     Email
                   </Label>
                   <Input
@@ -158,14 +159,14 @@ const ContactSection: React.FC = () => {
                     value={formState.email}
                     onChange={handleChange}
                     required
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary text-black dark:text-white"
                     placeholder="Your email"
                     autoComplete="email"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-base font-medium">
+                  <Label htmlFor="message" className="text-base font-medium text-foreground">
                     Message
                   </Label>
                   <Textarea
@@ -175,7 +176,7 @@ const ContactSection: React.FC = () => {
                     value={formState.message}
                     onChange={handleChange}
                     required
-                    className="resize-none transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    className="resize-none transition-all duration-200 focus:ring-2 focus:ring-primary text-black dark:text-white"
                     placeholder="Your message"
                   />
                 </div>
@@ -209,26 +210,26 @@ const ContactSection: React.FC = () => {
 
                 {/* Display a summary of the filled information */}
                 {(formState.name || formState.email || formState.message) && (
-                  <div className="mt-4 p-3 rounded-md bg-secondary/50 dark:bg-secondary/30">
-                    <p className="text-sm font-medium mb-1">Form Summary:</p>
+                  <div className="mt-4 p-3 rounded-md bg-secondary/30 dark:bg-secondary/20 border border-border/30">
+                    <p className="text-sm font-medium mb-1 text-foreground">Form Summary:</p>
                     <div className="space-y-1 text-sm">
                       {formState.name && (
-                        <p><span className="font-medium">Name:</span> {formState.name}</p>
+                        <p className="text-foreground"><span className="font-medium">Name:</span> {formState.name}</p>
                       )}
                       {formState.email && (
-                        <p><span className="font-medium">Email:</span> {formState.email}</p>
+                        <p className="text-foreground"><span className="font-medium">Email:</span> {formState.email}</p>
                       )}
                       {formState.message && (
                         <div>
-                          <span className="font-medium">Message:</span>
-                          <p className="mt-1 text-muted-foreground line-clamp-2">{formState.message}</p>
+                          <span className="font-medium text-foreground">Message:</span>
+                          <p className="mt-1 text-foreground/90 line-clamp-2">{formState.message}</p>
                         </div>
                       )}
                     </div>
                   </div>
                 )}
               </form>
-            </div>
+            </Card>
           </RevealAnimation>
         </div>
       </div>
