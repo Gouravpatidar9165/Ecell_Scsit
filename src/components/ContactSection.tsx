@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import { motion } from 'framer-motion';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -29,7 +29,7 @@ const ContactSection: React.FC = () => {
     try {
       // Call our Supabase Edge Function to send the email
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: JSON.stringify(formState),
+        body: formState,
       });
       
       if (error) {
@@ -176,7 +176,7 @@ const ContactSection: React.FC = () => {
                   </div>
                   
                   <div className="pt-2">
-                    <button
+                    <Button
                       type="submit"
                       disabled={isSending || isSent}
                       className="w-full px-6 py-3 bg-primary text-primary-foreground font-medium rounded-md transition-all duration-200 hover:shadow-lg hover:transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
@@ -199,7 +199,7 @@ const ContactSection: React.FC = () => {
                       ) : (
                         "Send Message"
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </form>

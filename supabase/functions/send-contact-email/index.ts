@@ -39,7 +39,7 @@ serve(async (req) => {
     // Send email to site admin
     const adminEmailResult = await resend.emails.send({
       from: "E-Cell Contact Form <onboarding@resend.dev>",
-      to: ["contact@ecell.com"], // Replace with your actual email
+      to: ["your-email@example.com"], // Replace with your actual email
       subject: `New Contact Form Message from ${name}`,
       html: `
         <h1>New Contact Form Submission</h1>
