@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import { motion } from 'framer-motion';
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -11,6 +13,7 @@ const ContactSection: React.FC = () => {
   });
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({
@@ -19,21 +22,43 @@ const ContactSection: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSending(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSending(false);
+    try {
+      // Call our Supabase Edge Function to send the email
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: JSON.stringify(formState),
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      // Success handling
       setIsSent(true);
       setFormState({ name: '', email: '', message: '' });
+      
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for reaching out. We'll get back to you soon.",
+      });
       
       // Reset success message after 5 seconds
       setTimeout(() => {
         setIsSent(false);
       }, 5000);
-    }, 1500);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "There was a problem sending your message. Please try again.",
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
