@@ -1,9 +1,13 @@
+
 import React, { useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import { motion } from 'framer-motion';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 const ContactSection: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -125,83 +129,104 @@ const ContactSection: React.FC = () => {
           
           <RevealAnimation delay={400}>
             <div className="bg-white dark:bg-black rounded-lg p-6 md:p-8 shadow-lg">
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      Name
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={formState.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-md border bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formState.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-md border bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200"
-                      placeholder="Your email"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-2">
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={5}
-                      value={formState.message}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 rounded-md border bg-white dark:bg-black focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 resize-none"
-                      placeholder="Your message"
-                    />
-                  </div>
-                  
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      disabled={isSending || isSent}
-                      className="w-full px-6 py-3 bg-primary text-primary-foreground font-medium rounded-md transition-all duration-200 hover:shadow-lg hover:transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
-                    >
-                      {isSending ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Sending...
-                        </>
-                      ) : isSent ? (
-                        <>
-                          <svg className="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Message Sent
-                        </>
-                      ) : (
-                        "Send Message"
-                      )}
-                    </Button>
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-base font-medium">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={formState.name}
+                    onChange={handleChange}
+                    required
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    placeholder="Your name"
+                    autoComplete="name"
+                  />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-base font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formState.email}
+                    onChange={handleChange}
+                    required
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    placeholder="Your email"
+                    autoComplete="email"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-base font-medium">
+                    Message
+                  </Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={formState.message}
+                    onChange={handleChange}
+                    required
+                    className="resize-none transition-all duration-200 focus:ring-2 focus:ring-primary"
+                    placeholder="Your message"
+                  />
+                </div>
+                
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={isSending || isSent}
+                    className="w-full px-6 py-3 bg-primary text-primary-foreground font-medium rounded-md transition-all duration-200 hover:shadow-lg hover:transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                  >
+                    {isSending ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                      </>
+                    ) : isSent ? (
+                      <>
+                        <svg className="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Message Sent
+                      </>
+                    ) : (
+                      "Send Message"
+                    )}
+                  </Button>
+                </div>
+
+                {/* Display a summary of the filled information */}
+                {(formState.name || formState.email || formState.message) && (
+                  <div className="mt-4 p-3 rounded-md bg-secondary/50 dark:bg-secondary/30">
+                    <p className="text-sm font-medium mb-1">Form Summary:</p>
+                    <div className="space-y-1 text-sm">
+                      {formState.name && (
+                        <p><span className="font-medium">Name:</span> {formState.name}</p>
+                      )}
+                      {formState.email && (
+                        <p><span className="font-medium">Email:</span> {formState.email}</p>
+                      )}
+                      {formState.message && (
+                        <div>
+                          <span className="font-medium">Message:</span>
+                          <p className="mt-1 text-muted-foreground line-clamp-2">{formState.message}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </form>
             </div>
           </RevealAnimation>
