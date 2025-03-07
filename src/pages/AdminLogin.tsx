@@ -63,10 +63,9 @@ const AdminLogin: React.FC = () => {
         // If logging in with default credentials, show a warning
         if (username === 'admin' && password === 'admin123') {
           toast({
-            variant: "warning",
+            variant: "destructive",
             title: "Default credentials detected",
-            description: "Please change your credentials in the settings page for security.",
-            icon: <AlertCircle className="h-4 w-4" />
+            description: "Please change your credentials in the settings page for security."
           });
         } else {
           toast({
@@ -85,8 +84,7 @@ const AdminLogin: React.FC = () => {
         toast({
           variant: "destructive",
           title: "Login failed",
-          description: "Incorrect username or password. Please try again.",
-          icon: <AlertCircle className="h-4 w-4" />
+          description: "Incorrect username or password. Please try again."
         });
       }
     } catch (error) {
@@ -94,8 +92,7 @@ const AdminLogin: React.FC = () => {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An error occurred during login. Please try again.",
-        icon: <AlertCircle className="h-4 w-4" />
+        description: "An error occurred during login. Please try again."
       });
     } finally {
       setIsLoading(false);
@@ -103,7 +100,7 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh]">
+    <div className="flex items-center justify-center min-h-[80vh] px-4 py-8 sm:px-6">
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center justify-center mb-4">

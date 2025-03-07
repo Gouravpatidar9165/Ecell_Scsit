@@ -1,15 +1,14 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="py-12 px-4 border-t">
+    <footer className="py-12 px-4 sm:px-6 border-t">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1">
             <a href="#" className="text-2xl font-bold tracking-tighter mb-6 inline-block">E-Cell</a>
             <p className="text-muted-foreground mb-6">
@@ -64,26 +63,6 @@ const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
-          </div>
-          
-          <div className="col-span-1">
-            <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
-            <p className="text-muted-foreground mb-4">
-              Stay updated with our latest news and events.
-            </p>
-            <form className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="flex-1 px-4 py-2 rounded-l-md border focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-r-md hover:bg-primary/90 transition-colors duration-200"
-              >
-                Subscribe
-              </button>
-            </form>
           </div>
         </div>
         

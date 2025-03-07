@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 
 const AdminSettings: React.FC = () => {
@@ -144,8 +144,7 @@ const AdminSettings: React.FC = () => {
         
         toast({
           title: "Settings updated",
-          description: "Your admin credentials have been updated successfully.",
-          icon: <Check className="h-4 w-4" />
+          description: "Your admin credentials have been updated successfully."
         });
       } else {
         toast({
@@ -159,8 +158,7 @@ const AdminSettings: React.FC = () => {
       toast({
         variant: "destructive",
         title: "Update failed",
-        description: "An error occurred while updating your credentials.",
-        icon: <AlertCircle className="h-4 w-4" />
+        description: "An error occurred while updating your credentials."
       });
     } finally {
       setIsLoading(false);
@@ -172,7 +170,7 @@ const AdminSettings: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-2xl">
+    <div className="container mx-auto py-8 px-4 sm:px-6 max-w-2xl">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Admin Settings</CardTitle>
