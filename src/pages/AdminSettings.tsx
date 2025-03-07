@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, Check } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 
 const AdminSettings: React.FC = () => {
@@ -16,6 +17,7 @@ const AdminSettings: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [adminId, setAdminId] = useState<string | null>(null);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
   const { toast } = useToast();
 
   // Check if user is authenticated
@@ -39,25 +41,43 @@ const AdminSettings: React.FC = () => {
           // Check if we got any results
           if (data && data.length > 0) {
             setAdminId(data[0].id);
+            console.log('Admin found with ID:', data[0].id);
           } else {
             console.log('No admin found with the stored username');
+            // Redirect to login if no admin found
+            localStorage.removeItem('admin_authenticated');
+            localStorage.removeItem('admin_username');
           }
         }
       } catch (error) {
         console.error('Error fetching admin data:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to fetch admin data. Please log in again.",
+        });
       }
     };
     
     if (isAuthenticated) {
       fetchCurrentAdmin();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, toast]);
+
+  // Check for password mismatch whenever newPassword or confirmPassword changes
+  useEffect(() => {
+    if (newPassword && confirmPassword) {
+      setPasswordMismatch(newPassword !== confirmPassword);
+    } else {
+      setPasswordMismatch(false);
+    }
+  }, [newPassword, confirmPassword]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate inputs
-    if (newPassword !== confirmPassword) {
+    // Additional validation
+    if (newPassword && newPassword !== confirmPassword) {
       toast({
         variant: "destructive",
         title: "Password mismatch",
@@ -125,6 +145,13 @@ const AdminSettings: React.FC = () => {
         toast({
           title: "Settings updated",
           description: "Your admin credentials have been updated successfully.",
+          icon: <Check className="h-4 w-4" />
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "No changes made",
+          description: "You didn't provide any new values to update.",
         });
       }
     } catch (error) {
@@ -133,6 +160,7 @@ const AdminSettings: React.FC = () => {
         variant: "destructive",
         title: "Update failed",
         description: "An error occurred while updating your credentials.",
+        icon: <AlertCircle className="h-4 w-4" />
       });
     } finally {
       setIsLoading(false);
@@ -211,7 +239,11 @@ const AdminSettings: React.FC = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={!newPassword}
                     required={!!newPassword}
+                    className={passwordMismatch ? "border-red-500" : ""}
                   />
+                  {passwordMismatch && (
+                    <p className="text-red-500 text-sm mt-1">Passwords do not match</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -220,7 +252,7 @@ const AdminSettings: React.FC = () => {
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isLoading || (!newUsername && !newPassword) || (!!newPassword && !confirmPassword)}
+              disabled={isLoading || (!newUsername && !newPassword) || (!!newPassword && !confirmPassword) || passwordMismatch}
             >
               {isLoading ? "Updating..." : "Update Credentials"}
             </Button>

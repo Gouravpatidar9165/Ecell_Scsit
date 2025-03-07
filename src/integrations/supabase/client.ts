@@ -31,7 +31,30 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     if (!uploadsBucketExists) {
       console.info('Note: "uploads" storage bucket needs to be created in Supabase');
     }
+    
+    // Check if admin credentials exist
+    const { data: adminCredentials, error } = await supabase
+      .from('admin_credentials')
+      .select('*');
+      
+    if (error) {
+      console.error('Error checking admin credentials:', error);
+    } else if (!adminCredentials || adminCredentials.length === 0) {
+      // Create default admin credentials if none exist
+      console.info('No admin credentials found. Creating default admin account...');
+      const { error: createError } = await supabase
+        .from('admin_credentials')
+        .insert([
+          { username: 'admin', password: 'admin123' }
+        ]);
+        
+      if (createError) {
+        console.error('Error creating default admin credentials:', createError);
+      } else {
+        console.info('Default admin credentials created. Username: admin, Password: admin123');
+      }
+    }
   } catch (error) {
-    console.error('Error checking storage buckets:', error);
+    console.error('Error during initialization:', error);
   }
 })();
