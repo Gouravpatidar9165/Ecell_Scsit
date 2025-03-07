@@ -14,6 +14,7 @@ const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasDefaultCredentials, setHasDefaultCredentials] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -23,14 +24,18 @@ const AdminLogin: React.FC = () => {
       try {
         const { data, error } = await supabase
           .from('admin_credentials')
-          .select('username, password')
-          .eq('username', 'admin')
-          .eq('password', 'admin123');
+          .select('username, password');
           
-        if (error) throw error;
+        if (error) {
+          console.error('Error checking credentials:', error);
+          return;
+        }
         
         if (data && data.length > 0) {
-          setHasDefaultCredentials(true);
+          const hasDefault = data.some(cred => 
+            cred.username === 'admin' && cred.password === 'admin123'
+          );
+          setHasDefaultCredentials(hasDefault);
         }
       } catch (error) {
         console.error('Error checking credentials:', error);
@@ -43,20 +48,30 @@ const AdminLogin: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError(null);
     
     try {
-      // Fetch admin credentials from the database - use array query instead of single()
+      // Fetch admin credentials from the database - using the SQL public view
       const { data, error } = await supabase
         .from('admin_credentials')
-        .select('username, password')
-        .eq('username', username);
+        .select('username, password');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Database query error:', error);
+        throw new Error('Failed to connect to the database');
+      }
+      
+      // Check if there are any credentials
+      if (!data || data.length === 0) {
+        throw new Error('No admin accounts found. Please contact the system administrator.');
+      }
       
       // Check if password matches
-      const isValid = data && data.length > 0 && data[0].password === password;
+      const matchedAdmin = data.find(admin => 
+        admin.username === username && admin.password === password
+      );
       
-      if (isValid) {
+      if (matchedAdmin) {
         localStorage.setItem('admin_authenticated', 'true');
         localStorage.setItem('admin_username', username);
         
@@ -67,20 +82,16 @@ const AdminLogin: React.FC = () => {
             title: "Default credentials detected",
             description: "Please change your credentials in the settings page for security."
           });
+          navigate('/admin/settings');
         } else {
           toast({
             title: "Login successful",
             description: "Welcome to the admin panel",
           });
-        }
-        
-        // Navigate to the settings page if using default credentials
-        if (username === 'admin' && password === 'admin123') {
-          navigate('/admin/settings');
-        } else {
           navigate('/admin/members');
         }
       } else {
+        setLoginError('Incorrect username or password. Please try again.');
         toast({
           variant: "destructive",
           title: "Login failed",
@@ -88,11 +99,13 @@ const AdminLogin: React.FC = () => {
         });
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       console.error('Login error:', error);
+      setLoginError(errorMessage);
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An error occurred during login. Please try again."
+        description: errorMessage
       });
     } finally {
       setIsLoading(false);
@@ -118,6 +131,12 @@ const AdminLogin: React.FC = () => {
               <p>Default username: admin</p>
               <p>Default password: admin123</p>
               <p className="mt-1">Please change these after logging in.</p>
+            </div>
+          )}
+          {loginError && (
+            <div className="mt-4 p-3 bg-red-50 text-red-800 rounded-md text-sm flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <p>{loginError}</p>
             </div>
           )}
         </CardHeader>
