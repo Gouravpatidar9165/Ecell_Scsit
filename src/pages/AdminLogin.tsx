@@ -36,9 +36,22 @@ const AdminLogin: React.FC = () => {
             cred.username === 'admin' && cred.password === 'admin123'
           );
           setHasDefaultCredentials(hasDefault);
+        } else {
+          // If no credentials exist, create default admin credentials
+          console.log('No admin credentials found, creating default...');
+          const { error: insertError } = await supabase
+            .from('admin_credentials')
+            .insert([{ username: 'admin', password: 'admin123' }]);
+            
+          if (insertError) {
+            console.error('Error creating default admin credentials:', insertError);
+          } else {
+            setHasDefaultCredentials(true);
+            console.log('Default admin credentials created successfully');
+          }
         }
       } catch (error) {
-        console.error('Error checking credentials:', error);
+        console.error('Error checking/creating credentials:', error);
       }
     };
     
@@ -51,7 +64,7 @@ const AdminLogin: React.FC = () => {
     setLoginError(null);
     
     try {
-      // Fetch admin credentials from the database - using the SQL public view
+      // Fetch admin credentials from the database
       const { data, error } = await supabase
         .from('admin_credentials')
         .select('username, password');

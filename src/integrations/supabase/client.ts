@@ -19,7 +19,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   },
 });
 
-// Initialize storage bucket if it doesn't exist
+// Check if storage bucket exists
 (async () => {
   try {
     // Check if uploads bucket exists
@@ -31,19 +31,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     if (!uploadsBucketExists) {
       console.info('Note: "uploads" storage bucket needs to be created in Supabase');
     }
-    
-    // Check if admin credentials exist - no longer trying to create them here
-    // since this could trigger RLS issues
-    const { data: adminCredentials, error } = await supabase
-      .from('admin_credentials')
-      .select('*');
-      
-    if (error) {
-      console.error('Error checking admin credentials:', error);
-    } else if (!adminCredentials || adminCredentials.length === 0) {
-      console.info('No admin credentials found in database. Please create them using SQL in Supabase.');
-    }
   } catch (error) {
-    console.error('Error during initialization:', error);
+    console.error('Error checking storage buckets:', error);
   }
 })();
