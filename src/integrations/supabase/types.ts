@@ -35,22 +35,34 @@ export type Database = {
       }
       bulletin_items: {
         Row: {
+          attachment_name: string | null
+          attachment_type: string | null
+          attachment_url: string | null
           content: string
           created_at: string | null
+          has_attachment: boolean | null
           id: string
           title: string
           updated_at: string | null
         }
         Insert: {
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
           content: string
           created_at?: string | null
+          has_attachment?: boolean | null
           id?: string
           title: string
           updated_at?: string | null
         }
         Update: {
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
           content?: string
           created_at?: string | null
+          has_attachment?: boolean | null
           id?: string
           title?: string
           updated_at?: string | null

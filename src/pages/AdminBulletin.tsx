@@ -1,13 +1,14 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Trash2, Plus } from "lucide-react";
+import { Loader2, Trash2, Plus, Link, Image, File, Paperclip } from "lucide-react";
 
 interface BulletinItem {
   id: string;
@@ -15,11 +16,23 @@ interface BulletinItem {
   content: string;
   created_at: string;
   updated_at: string;
+  has_attachment: boolean | null;
+  attachment_type: string | null;
+  attachment_url: string | null;
+  attachment_name: string | null;
 }
 
 const AdminBulletin: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [attachmentType, setAttachmentType] = useState<"none" | "link" | "image" | "pdf">("none");
+  const [linkUrl, setLinkUrl] = useState("");
+  const [attachmentName, setAttachmentName] = useState("");
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -37,7 +50,14 @@ const AdminBulletin: React.FC = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (newItem: { title: string; content: string }) => {
+    mutationFn: async (newItem: { 
+      title: string;
+      content: string;
+      has_attachment: boolean;
+      attachment_type: string | null;
+      attachment_url: string | null;
+      attachment_name: string | null;
+    }) => {
       const { data, error } = await supabase
         .from('bulletin_items')
         .insert([newItem])
@@ -48,8 +68,7 @@ const AdminBulletin: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bulletinItems'] });
-      setTitle("");
-      setContent("");
+      resetForm();
       toast({
         title: "Success",
         description: "Announcement added successfully",
@@ -66,6 +85,29 @@ const AdminBulletin: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      // First check if there's an attachment to delete
+      const { data: itemData } = await supabase
+        .from('bulletin_items')
+        .select('has_attachment, attachment_url')
+        .eq('id', id)
+        .single();
+      
+      // If there's a file attachment, delete it from storage
+      if (itemData?.has_attachment && itemData.attachment_url && 
+          (itemData.attachment_url.includes('announcement_attachments'))) {
+        const path = itemData.attachment_url.split('/').pop();
+        if (path) {
+          const { error: storageError } = await supabase.storage
+            .from('announcement_attachments')
+            .remove([path]);
+          
+          if (storageError) {
+            console.error('Error deleting file from storage:', storageError);
+          }
+        }
+      }
+      
+      // Now delete the announcement
       const { error } = await supabase
         .from('bulletin_items')
         .delete()
@@ -75,6 +117,8 @@ const AdminBulletin: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bulletinItems'] });
+      setIsDeleteDialogOpen(false);
+      setItemToDelete(null);
       toast({
         title: "Success",
         description: "Announcement deleted successfully",
@@ -89,8 +133,63 @@ const AdminBulletin: React.FC = () => {
     }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFileToUpload(file);
+      setAttachmentName(file.name);
+    }
+  };
+
+  const uploadFile = async (): Promise<string | null> => {
+    if (!fileToUpload) return null;
+    
+    setIsUploading(true);
+    try {
+      // Generate a unique filename to avoid collisions
+      const fileExt = fileToUpload.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('announcement_attachments')
+        .upload(fileName, fileToUpload);
+      
+      if (error) throw error;
+      
+      // Get the public URL for the file
+      const { data: { publicUrl } } = supabase.storage
+        .from('announcement_attachments')
+        .getPublicUrl(data.path);
+      
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast({
+        title: "Upload Failed",
+        description: "There was an error uploading your file",
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setAttachmentType("none");
+    setLinkUrl("");
+    setAttachmentName("");
+    setFileToUpload(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!title.trim() || !content.trim()) {
       toast({
         title: "Error",
@@ -100,12 +199,68 @@ const AdminBulletin: React.FC = () => {
       return;
     }
 
-    createMutation.mutate({ title, content });
+    // Prepare the announcement object
+    const newAnnouncement = {
+      title,
+      content,
+      has_attachment: attachmentType !== "none",
+      attachment_type: attachmentType === "none" ? null : attachmentType,
+      attachment_url: null,
+      attachment_name: attachmentType === "none" ? null : attachmentName || null,
+    };
+
+    try {
+      // Handle link type
+      if (attachmentType === "link") {
+        if (!linkUrl) {
+          toast({
+            title: "Error",
+            description: "Please enter a valid URL",
+            variant: "destructive",
+          });
+          return;
+        }
+        newAnnouncement.attachment_url = linkUrl;
+      }
+      
+      // Handle file uploads (image or PDF)
+      if ((attachmentType === "image" || attachmentType === "pdf") && fileToUpload) {
+        const fileUrl = await uploadFile();
+        if (!fileUrl) {
+          return; // Error already shown in uploadFile
+        }
+        newAnnouncement.attachment_url = fileUrl;
+      }
+
+      // Create the announcement
+      createMutation.mutate(newAnnouncement);
+    } catch (error) {
+      console.error('Error creating announcement:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create announcement",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this announcement?")) {
-      deleteMutation.mutate(id);
+  const handleDeleteClick = (id: string) => {
+    setItemToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (itemToDelete) {
+      deleteMutation.mutate(itemToDelete);
+    }
+  };
+
+  const getAttachmentIcon = (type: string | null) => {
+    switch (type) {
+      case 'link': return <Link className="h-4 w-4 text-blue-500" />;
+      case 'image': return <Image className="h-4 w-4 text-green-500" />;
+      case 'pdf': return <File className="h-4 w-4 text-red-500" />;
+      default: return null;
     }
   };
 
@@ -141,17 +296,95 @@ const AdminBulletin: React.FC = () => {
                 required
               />
             </div>
+            
+            <div>
+              <label className="block mb-2 text-sm font-medium">Attachment Type</label>
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  type="button" 
+                  variant={attachmentType === "none" ? "default" : "outline"}
+                  onClick={() => setAttachmentType("none")}
+                  className="flex-1"
+                >
+                  None
+                </Button>
+                <Button 
+                  type="button" 
+                  variant={attachmentType === "link" ? "default" : "outline"}
+                  onClick={() => setAttachmentType("link")}
+                  className="flex-1"
+                >
+                  <Link className="mr-2 h-4 w-4" />
+                  Link
+                </Button>
+                <Button 
+                  type="button" 
+                  variant={attachmentType === "image" ? "default" : "outline"}
+                  onClick={() => setAttachmentType("image")}
+                  className="flex-1"
+                >
+                  <Image className="mr-2 h-4 w-4" />
+                  Image
+                </Button>
+                <Button 
+                  type="button" 
+                  variant={attachmentType === "pdf" ? "default" : "outline"}
+                  onClick={() => setAttachmentType("pdf")}
+                  className="flex-1"
+                >
+                  <File className="mr-2 h-4 w-4" />
+                  PDF
+                </Button>
+              </div>
+            </div>
+            
+            {attachmentType === "link" && (
+              <div>
+                <label htmlFor="linkUrl" className="block mb-2 text-sm font-medium">Link URL</label>
+                <Input
+                  id="linkUrl"
+                  type="url"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  required
+                />
+                <label htmlFor="linkName" className="block mt-2 mb-2 text-sm font-medium">Link Name (Optional)</label>
+                <Input
+                  id="linkName"
+                  value={attachmentName}
+                  onChange={(e) => setAttachmentName(e.target.value)}
+                  placeholder="Name to display for link"
+                />
+              </div>
+            )}
+            
+            {(attachmentType === "image" || attachmentType === "pdf") && (
+              <div>
+                <label htmlFor="fileUpload" className="block mb-2 text-sm font-medium">
+                  {attachmentType === "image" ? "Upload Image" : "Upload PDF"}
+                </label>
+                <Input
+                  id="fileUpload"
+                  type="file"
+                  accept={attachmentType === "image" ? "image/*" : "application/pdf"}
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                  required
+                />
+              </div>
+            )}
           </CardContent>
           <CardFooter>
             <Button 
               type="submit" 
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || isUploading}
               className="w-full"
             >
-              {createMutation.isPending ? (
+              {(createMutation.isPending || isUploading) ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding...
+                  {isUploading ? "Uploading..." : "Adding..."}
                 </>
               ) : (
                 <>
@@ -189,7 +422,7 @@ const AdminBulletin: React.FC = () => {
                   <Button
                     size="icon"
                     variant="destructive"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDeleteClick(item.id)}
                     className="h-8 w-8"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -197,12 +430,81 @@ const AdminBulletin: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm">{item.content}</p>
+                <p className="text-sm mb-3">{item.content}</p>
+                
+                {item.has_attachment && item.attachment_url && (
+                  <div className="mt-3 flex items-center p-2 bg-muted rounded-md">
+                    {getAttachmentIcon(item.attachment_type)}
+                    <span className="ml-2 text-sm">
+                      {item.attachment_type === 'link' ? (
+                        <a 
+                          href={item.attachment_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline flex items-center"
+                        >
+                          {item.attachment_name || 'View Link'} 
+                          <Link className="h-3 w-3 ml-1" />
+                        </a>
+                      ) : item.attachment_type === 'image' ? (
+                        <a 
+                          href={item.attachment_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {item.attachment_name || 'View Image'}
+                        </a>
+                      ) : item.attachment_type === 'pdf' ? (
+                        <a 
+                          href={item.attachment_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {item.attachment_name || 'View PDF'}
+                        </a>
+                      ) : (
+                        <span>{item.attachment_name || 'Attachment'}</span>
+                      )}
+                    </span>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+      
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this announcement? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
