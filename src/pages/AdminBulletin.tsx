@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +44,7 @@ const AdminBulletin: React.FC = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      return data as BulletinItem[] || [];
     }
   });
 
@@ -85,17 +84,17 @@ const AdminBulletin: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      // First check if there's an attachment to delete
       const { data: itemData } = await supabase
         .from('bulletin_items')
         .select('has_attachment, attachment_url')
         .eq('id', id)
         .single();
       
-      // If there's a file attachment, delete it from storage
-      if (itemData?.has_attachment && itemData.attachment_url && 
-          (itemData.attachment_url.includes('announcement_attachments'))) {
-        const path = itemData.attachment_url.split('/').pop();
+      const typedItemData = itemData as BulletinItem;
+      
+      if (typedItemData?.has_attachment && typedItemData.attachment_url && 
+          (typedItemData.attachment_url.includes('announcement_attachments'))) {
+        const path = typedItemData.attachment_url.split('/').pop();
         if (path) {
           const { error: storageError } = await supabase.storage
             .from('announcement_attachments')
@@ -107,7 +106,6 @@ const AdminBulletin: React.FC = () => {
         }
       }
       
-      // Now delete the announcement
       const { error } = await supabase
         .from('bulletin_items')
         .delete()
@@ -146,7 +144,6 @@ const AdminBulletin: React.FC = () => {
     
     setIsUploading(true);
     try {
-      // Generate a unique filename to avoid collisions
       const fileExt = fileToUpload.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
       
@@ -156,7 +153,6 @@ const AdminBulletin: React.FC = () => {
       
       if (error) throw error;
       
-      // Get the public URL for the file
       const { data: { publicUrl } } = supabase.storage
         .from('announcement_attachments')
         .getPublicUrl(data.path);
@@ -199,7 +195,6 @@ const AdminBulletin: React.FC = () => {
       return;
     }
 
-    // Prepare the announcement object
     const newAnnouncement = {
       title,
       content,
@@ -210,7 +205,6 @@ const AdminBulletin: React.FC = () => {
     };
 
     try {
-      // Handle link type
       if (attachmentType === "link") {
         if (!linkUrl) {
           toast({
@@ -223,16 +217,14 @@ const AdminBulletin: React.FC = () => {
         newAnnouncement.attachment_url = linkUrl;
       }
       
-      // Handle file uploads (image or PDF)
       if ((attachmentType === "image" || attachmentType === "pdf") && fileToUpload) {
         const fileUrl = await uploadFile();
         if (!fileUrl) {
-          return; // Error already shown in uploadFile
+          return;
         }
         newAnnouncement.attachment_url = fileUrl;
       }
 
-      // Create the announcement
       createMutation.mutate(newAnnouncement);
     } catch (error) {
       console.error('Error creating announcement:', error);

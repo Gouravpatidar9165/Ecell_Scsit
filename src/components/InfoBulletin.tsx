@@ -30,7 +30,7 @@ const InfoBulletin: React.FC = () => {
         console.error("Error fetching bulletin items:", error);
         return [];
       }
-      return data || [];
+      return data as BulletinItem[] || [];
     }
   });
 
