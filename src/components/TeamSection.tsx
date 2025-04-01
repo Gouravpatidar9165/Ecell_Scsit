@@ -3,6 +3,14 @@ import React, { useEffect, useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import ImageWithFallback from './ImageWithFallback';
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from "@/components/ui/carousel";
 
 interface SocialLink {
   id?: string;
@@ -77,6 +85,7 @@ const TeamSection: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -140,7 +149,7 @@ const TeamSection: React.FC = () => {
   // If loading, show skeleton
   if (isLoading) {
     return (
-      <section id="team" className="py-24 px-4 bg-secondary/30">
+      <section id="team" className="py-24 px-4 bg-secondary/30 tech-gradient">
         <div className="max-w-7xl mx-auto">
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Our Team</span>
           <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-12">
@@ -151,7 +160,7 @@ const TeamSection: React.FC = () => {
           </div>
           
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
+            {[1, 2, 3].map((n) => (
               <div key={n} className="bg-white dark:bg-black rounded-lg overflow-hidden h-full">
                 <div className="aspect-[3/4] bg-gray-200 animate-pulse"></div>
                 <div className="p-5 text-center">
@@ -173,7 +182,7 @@ const TeamSection: React.FC = () => {
   // Show error message if there's an error and no data
   if (error && teamMembers.length === 0) {
     return (
-      <section id="team" className="py-24 px-4 bg-secondary/30">
+      <section id="team" className="py-24 px-4 bg-secondary/30 tech-gradient">
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Our Team</span>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Meet The Leaders</h2>
@@ -249,7 +258,7 @@ const TeamSection: React.FC = () => {
   ];
 
   return (
-    <section id="team" className="py-24 px-4 bg-secondary/30">
+    <section id="team" className="py-24 px-4 bg-secondary/30 tech-gradient">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Our Team</span>
@@ -267,18 +276,34 @@ const TeamSection: React.FC = () => {
           </RevealAnimation>
         </div>
         
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {displayMembers.map((member, index) => (
-            <TeamMember
-              key={member.id}
-              name={member.name}
-              position={member.position}
-              imageSrc={member.image_url}
-              socialLinks={member.socialLinks}
-              delay={100 * (index + 1)}
-            />
-          ))}
-        </div>
+        <Carousel 
+          opts={{ 
+            align: "start",
+            slidesToScroll: isMobile ? 1 : 3
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {displayMembers.map((member, index) => (
+              <CarouselItem 
+                key={member.id} 
+                className={isMobile ? "pl-4 basis-full" : "pl-4 md:basis-1/3"}
+              >
+                <TeamMember
+                  name={member.name}
+                  position={member.position}
+                  imageSrc={member.image_url}
+                  socialLinks={member.socialLinks}
+                  delay={100 * (index + 1)}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-center mt-6 gap-2">
+            <CarouselPrevious className="relative static left-0 right-auto translate-y-0 mr-2" />
+            <CarouselNext className="relative static left-0 right-auto translate-y-0" />
+          </div>
+        </Carousel>
       </div>
     </section>
   );
