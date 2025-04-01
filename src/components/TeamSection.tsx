@@ -7,9 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Carousel,
   CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
+  CarouselItem
 } from "@/components/ui/carousel";
 
 interface SocialLink {
@@ -85,7 +83,19 @@ const TeamSection: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [api, setApi] = useState<any>(null);
   const isMobile = useIsMobile();
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    if (!api) return;
+    
+    const autoPlayInterval = setInterval(() => {
+      api.scrollNext();
+    }, 3000); // Scroll every 3 seconds
+    
+    return () => clearInterval(autoPlayInterval);
+  }, [api]);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -279,9 +289,11 @@ const TeamSection: React.FC = () => {
         <Carousel 
           opts={{ 
             align: "start",
-            slidesToScroll: isMobile ? 1 : 3
+            slidesToScroll: isMobile ? 1 : 3,
+            loop: true
           }}
           className="w-full"
+          setApi={setApi}
         >
           <CarouselContent className="-ml-4">
             {displayMembers.map((member, index) => (
@@ -299,10 +311,6 @@ const TeamSection: React.FC = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="flex justify-center mt-6 gap-2">
-            <CarouselPrevious className="relative static left-0 right-auto translate-y-0 mr-2" />
-            <CarouselNext className="relative static left-0 right-auto translate-y-0" />
-          </div>
         </Carousel>
       </div>
     </section>

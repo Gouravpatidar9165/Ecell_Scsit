@@ -6,7 +6,7 @@ import { Card, CardContent } from './ui/card';
 
 const AboutSection: React.FC = () => {
   return (
-    <section id="about" className="py-24 px-4 bg-secondary/30">
+    <section id="about" className="py-24 px-4 tech-gradient">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">About Us</span>
