@@ -101,7 +101,7 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay with blur effect */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -109,14 +109,14 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-white dark:bg-black flex flex-col items-center justify-center"
+            className="fixed inset-0 z-40 bg-white/70 dark:bg-black/70 backdrop-blur-xl flex flex-col items-center justify-center"
           >
             <nav className="flex flex-col items-center space-y-8">
               {['About', 'Initiatives', 'Team', 'Contact'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="text-2xl font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                  className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item}
