@@ -51,9 +51,13 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <a 
               href="#" 
-              className="text-2xl font-bold tracking-tighter"
+              className="flex items-center"
             >
-              E-Cell
+              <img 
+                src="/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png"
+                alt="E-Cell Logo" 
+                className="h-12 w-auto" 
+              />
             </a>
           </div>
 

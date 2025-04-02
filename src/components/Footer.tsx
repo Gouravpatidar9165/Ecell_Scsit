@@ -10,7 +10,13 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1">
-            <a href="#" className="text-2xl font-bold tracking-tighter mb-6 inline-block">E-Cell</a>
+            <a href="#" className="inline-block mb-6">
+              <img 
+                src="/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png" 
+                alt="E-Cell Logo" 
+                className="h-16 w-auto mb-3"
+              />
+            </a>
             <p className="text-muted-foreground mb-6">
               Empowering students to innovate and lead through entrepreneurship.
             </p>

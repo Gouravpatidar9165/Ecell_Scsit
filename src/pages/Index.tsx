@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
@@ -10,8 +10,11 @@ import TeamSection from '@/components/TeamSection';
 import EventGallery from '@/components/EventGallery';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const Index: React.FC = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     const loadFontAwesome = () => {
       const link = document.createElement('link');
@@ -21,10 +24,18 @@ const Index: React.FC = () => {
     };
     
     loadFontAwesome();
+
+    // Set page as loaded after a short delay
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 2500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <main className="min-h-screen overflow-x-hidden">
+      <LoadingScreen />
       <Navbar />
       <HeroSection />
       <InfoBulletin />
