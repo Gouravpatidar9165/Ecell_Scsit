@@ -48,7 +48,8 @@ const Navbar: React.FC = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
+            {/* E-Cell Logo */}
             <a 
               href="#" 
               className="flex items-center"
@@ -56,6 +57,20 @@ const Navbar: React.FC = () => {
               <img 
                 src="/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png"
                 alt="E-Cell Logo" 
+                className="h-12 w-auto" 
+              />
+            </a>
+            
+            {/* SCSIT Logo */}
+            <a 
+              href="https://scs.dauniv.ac.in/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center"
+            >
+              <img 
+                src="/lovable-uploads/0f47e3fe-e528-4ba8-8eb0-e8ee09167a92.png"
+                alt="SCSIT Logo" 
                 className="h-12 w-auto" 
               />
             </a>
