@@ -34,7 +34,7 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center px-4 relative overflow-hidden">
+    <section className="min-h-screen flex flex-col justify-center items-center px-4 pt-16 pb-24 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background"></div>
       </div>
@@ -104,14 +104,15 @@ const HeroSection: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* Scroll Down Animation - Repositioned and with responsive adjustments */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.8 }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+        className="fixed bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 z-10"
       >
         <div className="flex flex-col items-center">
-          <span className="text-sm mb-2 text-gray-200">Scroll Down</span>
+          <span className="text-sm mb-2 text-gray-200 opacity-80">Scroll Down</span>
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
