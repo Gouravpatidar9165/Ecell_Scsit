@@ -62,7 +62,8 @@ const TestimonialsSection: React.FC = () => {
             <CarouselContent className="-ml-2 md:-ml-4">
               {testimonials.map((testimonial, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                  <Card className="border border-border/50 bg-background/80 backdrop-blur-sm p-6 h-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+<Card className="border border-border/50 bg-background/80 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+
                     <div className="flex flex-col h-full">
                       <div className="flex items-center mb-4">
                         <Avatar className="h-12 w-12 mr-4 border-2 border-blue-500/30">
