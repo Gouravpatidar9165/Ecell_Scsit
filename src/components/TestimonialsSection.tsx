@@ -94,8 +94,8 @@ const TestimonialsSection: React.FC = () => {
             </CarouselContent>
             {!isMobile && (
               <>
-                <CarouselPrevious className="left-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
-                <CarouselNext className="right-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
+                <CarouselPrevious className="left-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-black" />
+                <CarouselNext className="right-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-black" />
               </>
             )}
           </Carousel>
