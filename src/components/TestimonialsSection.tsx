@@ -83,7 +83,7 @@ const TestimonialsSection: React.FC = () => {
                       
                       <div className="relative flex-1">
                         <Quote className="absolute -top-1 -left-1 text-blue-500/20 w-8 h-8" />
-                        <p className="text-gray-300 relative z-10 pl-2 pt-2 line-clamp-6">
+                        <p className="text-black relative z-10 pl-2 pt-2 line-clamp-6">
                           {testimonial.message}
                         </p>
                       </div>
