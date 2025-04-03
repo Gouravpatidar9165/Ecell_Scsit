@@ -48,13 +48,17 @@ const TestimonialsSection: React.FC = () => {
         </RevealAnimation>
 
         <RevealAnimation delay={200}>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
+<Carousel
+  opts={{
+    align: "start",
+    loop: true,
+    autoplay: true, // Enable autoplay for slider animation
+    autoplayInterval: 3000, // Set interval for autoplay
+    transition: 'ease-in-out', // Set transition effect
+  }}
+  className="w-full"
+>
+
             <CarouselContent className="-ml-2 md:-ml-4">
               {testimonials.map((testimonial, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
@@ -73,13 +77,13 @@ const TestimonialsSection: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="mb-3 text-yellow-400 flex">
+                      {/*<div className="mb-3 text-yellow-400 flex">
                         <Star size={16} fill="currentColor" />
                         <Star size={16} fill="currentColor" />
                         <Star size={16} fill="currentColor" />
                         <Star size={16} fill="currentColor" />
                         <Star size={16} fill="currentColor" />
-                      </div>
+                      </div>*/}
                       
                       <div className="relative flex-1">
                         <Quote className="absolute -top-1 -left-1 text-blue-500/20 w-8 h-8" />
