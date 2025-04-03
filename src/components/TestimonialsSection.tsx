@@ -17,19 +17,19 @@ const testimonials = [
   {
     name: "Kashvi Jain",
     message: "E-Cell has been an incredible space where ideas turn into action. It empowers dreamers to become achievers, pushing each other forward and turning visions into reality. Glad to be part of this journey..!!",
-    image: "/lovable-uploads/0f47e3fe-e528-4ba8-8eb0-e8ee09167a92.png",
+    image: "/images/Kashvi jain.jpg",
     position: "Former PR Manager, E-Cell"
   },
   {
     name: "Harsh Soni",
     message: "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality. What began as an idea is now a launchpad for fearless innovators and game-changers 🚀 and I'm proud to have played a part in its journey.",
-    image: "/lovable-uploads/0f47e3fe-e528-4ba8-8eb0-e8ee09167a92.png",
+    image: "/images/harsh.jpg",
     position: "Former Vice-President, E-Cell"
   },
   {
     name: "Anand Kumar Payasi",
     message: "Having worked with students from various backgrounds, I can say that the E-Cell of SCSIT, DAVV offers a unique platform for growth. As someone who grew up in the military, I understand the value of adaptability, leadership, and perseverance. These qualities are mirrored in the E-Cell, where students learn not just about business.",
-    image: "/lovable-uploads/0f47e3fe-e528-4ba8-8eb0-e8ee09167a92.png",
+    image: "/images/Anand Kumar Payasi.jpg",
     position: "Former Mentor, E-Cell"
   },
 ];
@@ -83,7 +83,8 @@ const TestimonialsSection: React.FC = () => {
                       
                       <div className="relative flex-1">
                         <Quote className="absolute -top-1 -left-1 text-blue-500/20 w-8 h-8" />
-                        <p className="text-black relative z-10 pl-2 pt-2 line-clamp-6">
+<p className="text-black relative z-10 pl-2 pt-2 line-clamp-6">
+
                           {testimonial.message}
                         </p>
                       </div>
@@ -94,8 +95,8 @@ const TestimonialsSection: React.FC = () => {
             </CarouselContent>
             {!isMobile && (
               <>
-                <CarouselPrevious className="left-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-black" />
-                <CarouselNext className="right-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-black" />
+                <CarouselPrevious className="left-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
+                <CarouselNext className="right-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
               </>
             )}
           </Carousel>
