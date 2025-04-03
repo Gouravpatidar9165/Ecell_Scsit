@@ -86,7 +86,7 @@ const ContactSection: React.FC = () => {
             </RevealAnimation>
             
             <RevealAnimation delay={300}>
-              <div className="space-y-6">
+              {/*<div className="space-y-6">
                 <div className="flex items-start">
                   <div className="mr-3 p-3 rounded-full bg-secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -97,31 +97,31 @@ const ContactSection: React.FC = () => {
                     <h3 className="text-lg font-semibold">Phone</h3>
                     <p className="text-muted-foreground">+1 (123) 456-7890</p>
                   </div>
-                </div>
+                </div>*/}
                 
                 <div className="flex items-start">
-                  <div className="mr-3 p-3 rounded-full bg-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="mr-3 p-3 rounded-full bg-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="black" sroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                       <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Email</h3>
-                    <p className="text-muted-foreground">contact@ecell.com</p>
+                    <p className="text-muted-foreground">ecellscsit@gmail.com</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="mr-3 p-3 rounded-full bg-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="mr-3 p-3 rounded-full bg-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="black" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                       <circle cx="12" cy="10" r="3"></circle>
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Location</h3>
-                    <p className="text-muted-foreground">123 University Ave, Campus Building</p>
+                    <p className="text-muted-foreground">SCSIT, Takshashila Campus, Khandwa Road, Indore, Madhya Pradesh 452020, IN</p>
                   </div>
                 </div>
               </div>
