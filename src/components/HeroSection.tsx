@@ -104,12 +104,12 @@ const HeroSection: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Scroll Down Animation - Fixed positioning with proper spacing */}
+      {/* Scroll Down Animation - Changed from fixed to absolute positioning */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.8 }}
-        className="fixed bottom-8 md:bottom-12 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none"
+        className="absolute bottom-8 md:bottom-12 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none"
       >
         <div className="flex flex-col items-center">
           <span className="text-sm mb-2 text-gray-200 opacity-80 backdrop-blur-sm px-3 py-1 rounded-full">Scroll Down</span>
