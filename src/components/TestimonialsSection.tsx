@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import RevealAnimation from './RevealAnimation';
 import { Card } from "@/components/ui/card";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/carousel";
 import ImageWithFallback from './ImageWithFallback';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Slider } from "@/components/ui/slider";
 
 interface Testimonial {
   name: string;
@@ -43,28 +42,6 @@ const testimonials: Testimonial[] = [
 
 const TestimonialsSection: React.FC = () => {
   const isMobile = useIsMobile();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [autoPlay, setAutoPlay] = useState(true);
-  
-  // Auto-slide functionality
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (autoPlay) {
-      interval = setInterval(() => {
-        setActiveIndex(prev => (prev + 1) % testimonials.length);
-      }, 5000); // Change slide every 5 seconds
-    }
-    
-    return () => clearInterval(interval);
-  }, [autoPlay]);
-  
-  const handleSliderChange = (value: number[]) => {
-    setActiveIndex(value[0]);
-    // Temporarily pause autoplay when manually changing slides
-    setAutoPlay(false);
-    setTimeout(() => setAutoPlay(true), 10000);
-  };
   
   return (
     <section id="testimonials" className="py-24 px-4 bg-secondary/30 tech-gradient">
@@ -140,17 +117,6 @@ const TestimonialsSection: React.FC = () => {
               />
             </div>
           </Carousel>
-          
-          <div className="mt-8 max-w-md mx-auto">
-            <Slider
-              defaultValue={[0]}
-              max={testimonials.length - 1}
-              step={1}
-              value={[activeIndex]}
-              onValueChange={handleSliderChange}
-              className="cursor-pointer"
-            />
-          </div>
         </RevealAnimation>
       </div>
     </section>
