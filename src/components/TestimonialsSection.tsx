@@ -92,8 +92,7 @@ const TestimonialsSection: React.FC = () => {
               align: "start",
               loop: true,
             }}
-            value={{ index: activeIndex }}
-            onValueChange={value => setActiveIndex(value.index || 0)}
+            // Removed the 'value' and 'onValueChange' props as they don't exist on the Carousel component
           >
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
@@ -135,12 +134,10 @@ const TestimonialsSection: React.FC = () => {
               <CarouselPrevious 
                 className="relative inset-auto -left-0 translate-y-0 
                 transition-all duration-300 hover:bg-primary hover:text-white" 
-                onClick={() => setActiveIndex((activeIndex - 1 + testimonials.length) % testimonials.length)}
               />
               <CarouselNext 
                 className="relative inset-auto -right-0 translate-y-0 
                 transition-all duration-300 hover:bg-primary hover:text-white" 
-                onClick={() => setActiveIndex((activeIndex + 1) % testimonials.length)}
               />
             </div>
           </Carousel>
