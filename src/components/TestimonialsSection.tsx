@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import RevealAnimation from './RevealAnimation';
 import { Card } from "@/components/ui/card";
 import {
@@ -10,7 +10,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import ImageWithFallback from './ImageWithFallback';
-import { useMediaQuery } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Slider } from "@/components/ui/slider";
 
 interface Testimonial {
   name: string;
@@ -41,7 +42,29 @@ const testimonials: Testimonial[] = [
 ];
 
 const TestimonialsSection: React.FC = () => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isMobile = useIsMobile();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [autoPlay, setAutoPlay] = useState(true);
+  
+  // Auto-slide functionality
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (autoPlay) {
+      interval = setInterval(() => {
+        setActiveIndex(prev => (prev + 1) % testimonials.length);
+      }, 5000); // Change slide every 5 seconds
+    }
+    
+    return () => clearInterval(interval);
+  }, [autoPlay]);
+  
+  const handleSliderChange = (value: number[]) => {
+    setActiveIndex(value[0]);
+    // Temporarily pause autoplay when manually changing slides
+    setAutoPlay(false);
+    setTimeout(() => setAutoPlay(true), 10000);
+  };
   
   return (
     <section id="testimonials" className="py-24 px-4 bg-background">
@@ -63,33 +86,45 @@ const TestimonialsSection: React.FC = () => {
         </div>
         
         <RevealAnimation delay={300}>
-          <Carousel className="w-full max-w-5xl mx-auto" opts={{
-            align: "start",
-            loop: true,
-          }}>
+          <Carousel 
+            className="w-full max-w-5xl mx-auto" 
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            value={{ index: activeIndex }}
+            onValueChange={value => setActiveIndex(value.index || 0)}
+          >
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
                 <CarouselItem 
                   key={index} 
-                  className={`${isDesktop ? 'md:basis-1/2 lg:basis-1/3' : 'basis-full'} p-2`}
+                  className={`${!isMobile ? 'md:basis-1/2 lg:basis-1/3' : 'basis-full'} p-2`}
                 >
                   <div className="h-full">
-                    <Card className="p-6 h-full bg-background/70 backdrop-blur-sm border border-white/10 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px]">
+                    <Card className="p-6 h-full bg-background/70 backdrop-blur-sm border border-white/10 
+                      hover:border-primary/20 transition-all duration-500 hover:shadow-lg 
+                      transform hover:translate-y-[-5px] group">
                       <div className="flex flex-col h-full">
                         <div className="flex items-center mb-4">
-                          <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/50 mr-4">
+                          <div className="relative h-12 w-12 rounded-full overflow-hidden 
+                            border-2 border-primary/50 mr-4 transition-all duration-300
+                            group-hover:border-primary group-hover:scale-110">
                             <ImageWithFallback
                               src={testimonial.image}
                               alt={testimonial.name}
-                              className="object-cover w-full h-full"
+                              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                             />
                           </div>
                           <div>
-                            <h3 className="text-lg font-semibold">{testimonial.name}</h3>
+                            <h3 className="text-lg font-semibold group-hover:text-primary transition-colors duration-300">{testimonial.name}</h3>
                             <p className="text-sm text-muted-foreground">{testimonial.position}</p>
                           </div>
                         </div>
-                        <blockquote className="italic text-sm mb-4 flex-grow">"{testimonial.message}"</blockquote>
+                        <blockquote className="italic text-sm mb-4 flex-grow leading-relaxed 
+                          transition-all duration-500 group-hover:text-foreground">
+                          "{testimonial.message}"
+                        </blockquote>
                       </div>
                     </Card>
                   </div>
@@ -97,10 +132,29 @@ const TestimonialsSection: React.FC = () => {
               ))}
             </CarouselContent>
             <div className="hidden md:flex justify-end gap-2 mt-6">
-              <CarouselPrevious className="relative inset-auto -left-0 translate-y-0" />
-              <CarouselNext className="relative inset-auto -right-0 translate-y-0" />
+              <CarouselPrevious 
+                className="relative inset-auto -left-0 translate-y-0 
+                transition-all duration-300 hover:bg-primary hover:text-white" 
+                onClick={() => setActiveIndex((activeIndex - 1 + testimonials.length) % testimonials.length)}
+              />
+              <CarouselNext 
+                className="relative inset-auto -right-0 translate-y-0 
+                transition-all duration-300 hover:bg-primary hover:text-white" 
+                onClick={() => setActiveIndex((activeIndex + 1) % testimonials.length)}
+              />
             </div>
           </Carousel>
+          
+          <div className="mt-8 max-w-md mx-auto">
+            <Slider
+              defaultValue={[0]}
+              max={testimonials.length - 1}
+              step={1}
+              value={[activeIndex]}
+              onValueChange={handleSliderChange}
+              className="cursor-pointer"
+            />
+          </div>
         </RevealAnimation>
       </div>
     </section>
