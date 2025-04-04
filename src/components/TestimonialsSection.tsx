@@ -1,9 +1,7 @@
 
 import React from 'react';
 import RevealAnimation from './RevealAnimation';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
-import { Star, Quote } from 'lucide-react';
+import { Card } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -11,102 +9,86 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useIsMobile } from '@/hooks/use-mobile';
+import ImageWithFallback from './ImageWithFallback';
 
-const testimonials = [
+interface Testimonial {
+  name: string;
+  message: string;
+  image: string;
+  position: string;
+}
+
+const testimonials: Testimonial[] = [
   {
     name: "Kashvi Jain",
     message: "E-Cell has been an incredible space where ideas turn into action. It empowers dreamers to become achievers, pushing each other forward and turning visions into reality. Glad to be part of this journey..!!",
-    image: "/images/Kashvi jain.jpg",
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder since we don't have their images
     position: "Former PR Manager, E-Cell"
   },
   {
     name: "Harsh Soni",
-    message: "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality. What began as an idea is now a launchpad for fearless innovators and game-changers 🚀 and I'm proud to have played a part in its journey.",
-    image: "/images/harsh.jpg",
+    message: "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality.",
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder
     position: "Former Vice-President, E-Cell"
   },
   {
     name: "Anand Kumar Payasi",
-    message: "Having worked with students from various backgrounds, I can say that the E-Cell of SCSIT, DAVV offers a unique platform for growth. As someone who grew up in the military, I understand the value of adaptability, leadership, and perseverance. These qualities are mirrored in the E-Cell, where students learn not just about business.",
-    image: "/images/Anand Kumar Payasi.jpg",
+    message: "Having worked with students from various backgrounds, I can say that the E-Cell of SCSIT, DAVV offers a unique platform for growth. The dedication I've seen in the students here has been inspiring.",
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder
     position: "Former Mentor, E-Cell"
   },
 ];
 
 const TestimonialsSection: React.FC = () => {
-  const isMobile = useIsMobile();
-
   return (
-    <section id="testimonials" className="py-20 px-4 bg-gradient-to-b from-blue-950/10 to-transparent">
+    <section id="testimonials" className="py-24 px-4 bg-gradient-to-b from-blue-900/30 to-purple-900/30">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">What People <span className="text-blue-400">Say</span></h2>
-            <p className="text-gray-300">Hear from our community members</p>
-          </div>
+          <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Testimonials</span>
         </RevealAnimation>
-
-        <RevealAnimation delay={200}>
-<Carousel
-  opts={{
-    align: "start",
-    loop: true,
-    autoplay: true, // Enable autoplay for slider animation
-    autoplayInterval: 3000, // Set interval for autoplay
-    transition: 'ease-in-out', // Set transition effect
-  }}
-  className="w-full"
->
-
-            <CarouselContent className="-ml-2 md:-ml-4">
+        
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-12">
+          <RevealAnimation delay={100}>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">What People Say</h2>
+          </RevealAnimation>
+          
+          <RevealAnimation delay={200}>
+            <p className="text-muted-foreground max-w-md mt-4 md:mt-0">
+              Hear from our community members about their experiences with E-Cell SCSIT.
+            </p>
+          </RevealAnimation>
+        </div>
+        
+        <RevealAnimation delay={300}>
+          <Carousel className="w-full max-w-5xl mx-auto">
+            <CarouselContent>
               {testimonials.map((testimonial, index) => (
-                <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-<Card className="border border-border/50 bg-background/80 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-
+                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 p-2">
+                  <Card className="p-6 h-full bg-background/70 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
                     <div className="flex flex-col h-full">
                       <div className="flex items-center mb-4">
-                        <Avatar className="h-12 w-12 mr-4 border-2 border-blue-500/30">
-                          <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                          <AvatarFallback className="bg-blue-500/20 text-blue-200">
-                            {testimonial.name.substring(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/50 mr-4">
+                          <ImageWithFallback
+                            src={testimonial.image}
+                            alt={testimonial.name}
+                            className="object-cover w-full h-full"
+                          />
+                        </div>
                         <div>
-                          <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
-                          <p className="text-sm text-blue-400">{testimonial.position}</p>
+                          <h3 className="text-lg font-semibold">{testimonial.name}</h3>
+                          <p className="text-sm text-muted-foreground">{testimonial.position}</p>
                         </div>
                       </div>
-                      
-                      {/*<div className="mb-3 text-yellow-400 flex">
-                        <Star size={16} fill="currentColor" />
-                        <Star size={16} fill="currentColor" />
-                        <Star size={16} fill="currentColor" />
-                        <Star size={16} fill="currentColor" />
-                        <Star size={16} fill="currentColor" />
-                      </div>*/}
-                      
-                      <div className="relative flex-1">
-                        <Quote className="absolute -top-1 -left-1 text-blue-500/20 w-8 h-8" />
-<p className="text-black relative z-10 pl-2 pt-2 line-clamp-6">
-
-                          {testimonial.message}
-                        </p>
-                      </div>
+                      <blockquote className="italic text-sm mb-4 flex-grow">"{testimonial.message}"</blockquote>
                     </div>
                   </Card>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {!isMobile && (
-              <>
-                {/* 
-                <CarouselPrevious className="left-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
-                <CarouselNext className="right-0 bg-background/50 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white" />
-                */}
-
-              </>
-            )}
+            <div className="hidden md:flex justify-end gap-2 mt-6">
+              <CarouselPrevious className="relative inset-auto -left-0 translate-y-0" />
+              <CarouselNext className="relative inset-auto -right-0 translate-y-0" />
+            </div>
           </Carousel>
         </RevealAnimation>
       </div>
