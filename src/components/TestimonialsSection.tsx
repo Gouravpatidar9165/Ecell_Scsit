@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import ImageWithFallback from './ImageWithFallback';
+import { useMediaQuery } from '@/hooks/use-mobile';
 
 interface Testimonial {
   name: string;
@@ -22,26 +23,28 @@ const testimonials: Testimonial[] = [
   {
     name: "Kashvi Jain",
     message: "E-Cell has been an incredible space where ideas turn into action. It empowers dreamers to become achievers, pushing each other forward and turning visions into reality. Glad to be part of this journey..!!",
-    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder since we don't have their images
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png",
     position: "Former PR Manager, E-Cell"
   },
   {
     name: "Harsh Soni",
     message: "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality.",
-    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png",
     position: "Former Vice-President, E-Cell"
   },
   {
     name: "Anand Kumar Payasi",
     message: "Having worked with students from various backgrounds, I can say that the E-Cell of SCSIT, DAVV offers a unique platform for growth. The dedication I've seen in the students here has been inspiring.",
-    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png", // Using E-Cell logo as placeholder
+    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png",
     position: "Former Mentor, E-Cell"
   },
 ];
 
 const TestimonialsSection: React.FC = () => {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  
   return (
-    <section id="testimonials" className="py-24 px-4 bg-gradient-to-b from-blue-900/30 to-purple-900/30">
+    <section id="testimonials" className="py-24 px-4 bg-background">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Testimonials</span>
@@ -60,28 +63,36 @@ const TestimonialsSection: React.FC = () => {
         </div>
         
         <RevealAnimation delay={300}>
-          <Carousel className="w-full max-w-5xl mx-auto">
+          <Carousel className="w-full max-w-5xl mx-auto" opts={{
+            align: "start",
+            loop: true,
+          }}>
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 p-2">
-                  <Card className="p-6 h-full bg-background/70 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <div className="flex flex-col h-full">
-                      <div className="flex items-center mb-4">
-                        <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/50 mr-4">
-                          <ImageWithFallback
-                            src={testimonial.image}
-                            alt={testimonial.name}
-                            className="object-cover w-full h-full"
-                          />
+                <CarouselItem 
+                  key={index} 
+                  className={`${isDesktop ? 'md:basis-1/2 lg:basis-1/3' : 'basis-full'} p-2`}
+                >
+                  <div className="h-full">
+                    <Card className="p-6 h-full bg-background/70 backdrop-blur-sm border border-white/10 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px]">
+                      <div className="flex flex-col h-full">
+                        <div className="flex items-center mb-4">
+                          <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-primary/50 mr-4">
+                            <ImageWithFallback
+                              src={testimonial.image}
+                              alt={testimonial.name}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold">{testimonial.name}</h3>
+                            <p className="text-sm text-muted-foreground">{testimonial.position}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold">{testimonial.name}</h3>
-                          <p className="text-sm text-muted-foreground">{testimonial.position}</p>
-                        </div>
+                        <blockquote className="italic text-sm mb-4 flex-grow">"{testimonial.message}"</blockquote>
                       </div>
-                      <blockquote className="italic text-sm mb-4 flex-grow">"{testimonial.message}"</blockquote>
-                    </div>
-                  </Card>
+                    </Card>
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
