@@ -1,4 +1,5 @@
 
+import React from "react"; // Add explicit React import
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
+// Create the query client outside of the component
 const queryClient = new QueryClient();
 
 const App = () => (

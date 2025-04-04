@@ -67,7 +67,7 @@ const TestimonialsSection: React.FC = () => {
   };
   
   return (
-    <section id="testimonials" className="py-24 px-4 bg-background">
+    <section id="testimonials" className="py-24 px-4 bg-secondary/30 tech-gradient">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
           <span className="inline-block py-1 px-3 mb-3 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Testimonials</span>
@@ -92,7 +92,6 @@ const TestimonialsSection: React.FC = () => {
               align: "start",
               loop: true,
             }}
-            // Removed the 'value' and 'onValueChange' props as they don't exist on the Carousel component
           >
             <CarouselContent>
               {testimonials.map((testimonial, index) => (

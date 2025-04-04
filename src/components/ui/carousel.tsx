@@ -114,17 +114,7 @@ const Carousel = React.forwardRef<
       api.on("reInit", onSelect)
       api.on("select", onSelect)
 
-      // Set up auto-sliding
-      const autoSlideInterval = setInterval(() => {
-        if (api.canScrollNext()) {
-          api.scrollNext()
-        } else {
-          api.scrollTo(0)
-        }
-      }, 5000)
-
       return () => {
-        clearInterval(autoSlideInterval)
         api?.off("select", onSelect)
       }
     }, [api, onSelect])
