@@ -23,7 +23,7 @@ const testimonials: Testimonial[] = [
   {
     name: "Kashvi Jain",
     message: "E-Cell has been an incredible space where ideas turn into action. It empowers dreamers to become achievers, pushing each other forward and turning visions into reality. Glad to be part of this journey..!!",
-    image: "/lovable-uploads/499b3589-d0d9-48f7-80dd-6ce910174b88.png",
+    image: "/images/Kashvi jain.jpg",
     position: "Former PR Manager, E-Cell"
   },
   {
