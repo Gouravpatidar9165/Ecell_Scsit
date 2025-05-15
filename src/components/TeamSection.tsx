@@ -93,7 +93,7 @@ const TeamSection: React.FC = () => {
     
     const autoPlayInterval = setInterval(() => {
       api.scrollNext();
-    }, 3000); // Scroll every 3 seconds
+    }, 5000); // Scroll every 5 seconds
     
     return () => clearInterval(autoPlayInterval);
   }, [api]);
