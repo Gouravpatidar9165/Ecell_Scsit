@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import RevealAnimation from './RevealAnimation';
 import ImageWithFallback from './ImageWithFallback';
@@ -78,6 +77,8 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
     </RevealAnimation>
   );
 };
+
+const STAGGER_DELAY = 160; // ms - increase for clearer effect
 
 const TeamSection: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -306,7 +307,7 @@ const TeamSection: React.FC = () => {
                   position={member.position}
                   imageSrc={member.image_url}
                   socialLinks={member.socialLinks}
-                  delay={100 * (index + 1)}
+                  delay={index * STAGGER_DELAY}
                 />
               </CarouselItem>
             ))}
