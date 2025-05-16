@@ -8,6 +8,13 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 
+interface Testimonial {
+  name: string;
+  message: string;
+  image: string;
+  position: string;
+}
+
 const testimonials = [
   {
     name: "Kashvi Jain",
