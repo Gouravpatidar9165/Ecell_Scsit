@@ -19,22 +19,20 @@ const TestimonialsSection: React.FC = () => {
     <section className="testimonials-section px-4 py-8" style={{ backgroundColor: '#252c3b' }}>
       <h2 className="text-2xl font-bold mb-8 text-center text-white">Testimonials</h2>
       <div className="max-w-6xl mx-auto">
-        {/* 
-          Use grid for desktop so that cards always stretch and cover full width;
-          On mobile (sm), show one card per row.
-         */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {testimonials.map((testimonial, index) => (
             <div key={index} className="h-full flex">
-              <div className="testimonial-card flex flex-col flex-1 p-6 border rounded-lg shadow-lg bg-white w-full">
-                <div className="flex flex-col items-center">
+              <div className="testimonial-card flex flex-col flex-1 p-6 border rounded-lg shadow-lg bg-white w-full min-h-[300px]">
+                <div className="flex flex-col items-center flex-1">
                   <img 
                     src={testimonial.image} 
                     alt={testimonial.name} 
                     className="w-20 h-20 rounded-full mb-4 object-cover"
                   />
                   <h3 className="font-semibold text-lg mb-2 text-black text-center">{testimonial.name}</h3>
-                  <p className="text-gray-600 text-center">{testimonial.message}</p>
+                  <p className="text-gray-600 text-center whitespace-pre-line break-words">{testimonial.message}</p>
                 </div>
               </div>
             </div>
@@ -46,4 +44,3 @@ const TestimonialsSection: React.FC = () => {
 };
 
 export default TestimonialsSection;
-
