@@ -21,12 +21,14 @@ const testimonials: Testimonial[] = [
     message:
       "E-Cell has been an incredible space where ideas turn into action. It empowers dreamers to become achievers, pushing each other forward and turning visions into reality. Glad to be part of this journey..!!",
     image: "/images/Kashvi jain.jpg",
+    position: "Former PR Manager, E-Cell"
   },
   {
     name: "Harsh Soni",
     message:
       "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality.",
     image: "/images/harsh.jpg",
+    position: "Former Vice-President, E-Cell"
   },
   {
     name: "Anand Kumar Payasi",
