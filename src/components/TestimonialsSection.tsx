@@ -21,6 +21,12 @@ const testimonials = [
       "Founding the E-Cell wasn't about starting yet another club, it was about building a launchpad for ideas, innovation, and growth of every member. This community is all about turning big dreams into reality.",
     image: "/images/harsh.jpg",
   },
+  {
+    name: "Anand Kumar Payasi",
+    message: "Having worked with students from various backgrounds, I can say that the E-Cell of SCSIT, DAVV offers a unique platform for growth. The dedication I've seen in the students here has been inspiring.",
+    image: "/images/Anand Kumar Payasi.jpg",
+    position: "Former Mentor, E-Cell"
+  },
 ];
 
 const AUTO_SLIDE_INTERVAL = 3500; // milliseconds
