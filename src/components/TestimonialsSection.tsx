@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Carousel,
@@ -67,7 +66,7 @@ const TestimonialsSection: React.FC = () => {
           opts={{
             loop: true,
             slidesToScroll: 1,
-            slidesToShow: cardCount, // Only effective in Embla’s vanilla config, but this helps clarify intent.
+            // removed slidesToShow since it's not in Embla's options
             // axis: 'x' by default for horizontal
           }}
           className="w-full"
