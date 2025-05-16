@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Carousel,
@@ -7,6 +8,7 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
+import RevealAnimation from "./RevealAnimation";
 
 interface Testimonial {
   name: string;
@@ -39,11 +41,11 @@ const testimonials: Testimonial[] = [
 ];
 
 const AUTO_SLIDE_INTERVAL = 3500; // milliseconds
+const ANIMATION_STAGGER = 120; // ms
 
 const TestimonialsSection: React.FC = () => {
   const isMobile = useIsMobile();
   const [current, setCurrent] = React.useState(0);
-  const cardCount = isMobile ? 1 : 3;
 
   // Auto-slide effect for infinite loop
   React.useEffect(() => {
@@ -53,8 +55,6 @@ const TestimonialsSection: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // center cards and make sure we scroll by 1 slide per time always, just show 3 at a time on desktop.
-  // adjust styling for responsive card size
   return (
     <section
       className="testimonials-section px-4 py-8"
@@ -68,8 +68,6 @@ const TestimonialsSection: React.FC = () => {
           opts={{
             loop: true,
             slidesToScroll: 1,
-            // removed slidesToShow since it's not in Embla's options
-            // axis: 'x' by default for horizontal
           }}
           className="w-full"
           setApi={(api) => {
@@ -84,35 +82,35 @@ const TestimonialsSection: React.FC = () => {
                 key={index}
                 className={
                   `flex justify-center items-stretch pb-8` +
-                  // Responsive width for 1 per view on mobile, 3 per view on desktop
                   (isMobile
                     ? " basis-full max-w-[90vw]"
                     : " basis-1/3 max-w-[400px]") +
                   " transition-all duration-300"
                 }
               >
-                <div className="testimonial-card flex flex-col p-6 border rounded-lg shadow-lg bg-white w-full h-full max-w-md min-h-[220px] mx-auto">
-                  <div className="flex flex-col items-center flex-1">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-20 h-20 rounded-full mb-4 object-cover"
-                    />
-                    <h3 className="font-semibold text-lg mb-2 text-black text-center">
-                      {testimonial.name}
-                    </h3>
-                    <p className="text-gray-600 text-center whitespace-pre-line break-words">
-                      {testimonial.message}
-                    </p>
-                    {testimonial.position && (
-                      <span className="mt-2 text-xs text-gray-500 italic">{testimonial.position}</span>
-                    )}
+                <RevealAnimation delay={index * ANIMATION_STAGGER} className="h-full w-full">
+                  <div className="testimonial-card flex flex-col p-6 border rounded-lg shadow-lg bg-white w-full h-full max-w-md min-h-[220px] mx-auto">
+                    <div className="flex flex-col items-center flex-1">
+                      <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-20 h-20 rounded-full mb-4 object-cover"
+                      />
+                      <h3 className="font-semibold text-lg mb-2 text-black text-center">
+                        {testimonial.name}
+                      </h3>
+                      <p className="text-gray-600 text-center whitespace-pre-line break-words">
+                        {testimonial.message}
+                      </p>
+                      {testimonial.position && (
+                        <span className="mt-2 text-xs text-gray-500 italic">{testimonial.position}</span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </RevealAnimation>
               </CarouselItem>
             ))}
           </CarouselContent>
-          {/* Move arrows inwards for desktop, further out for mobile */}
           <CarouselPrevious className={isMobile ? "left-2" : "left-8"} />
           <CarouselNext className={isMobile ? "right-2" : "right-8"} />
         </Carousel>
@@ -122,3 +120,4 @@ const TestimonialsSection: React.FC = () => {
 };
 
 export default TestimonialsSection;
+
