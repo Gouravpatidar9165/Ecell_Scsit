@@ -78,15 +78,30 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {['About', 'Initiatives', 'Team', 'Contact'].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
-              >
-                {item}
-              </a>
-            ))}
+            <a
+              href="#about"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              About
+            </a>
+            <a
+              href="#initiatives"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              Initiatives
+            </a>
+            <Link
+              to="/team"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              Team
+            </Link>
+            <a
+              href="#contact"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              Contact
+            </a>
             <Link
               to="/admin"
               className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
@@ -131,16 +146,34 @@ const Navbar: React.FC = () => {
             className="fixed inset-0 z-40 bg-white/70 dark:bg-black/70 backdrop-blur-xl flex flex-col items-center justify-center"
           >
             <nav className="flex flex-col items-center space-y-8">
-              {['About', 'Initiatives', 'Team', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item}
-                </a>
-              ))}
+              <a
+                href="#about"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </a>
+              <a
+                href="#initiatives"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Initiatives
+              </a>
+              <Link
+                to="/team"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Team
+              </Link>
+              <a
+                href="#contact"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </a>
               <Link
                 to="/admin"
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"

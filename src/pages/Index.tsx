@@ -9,6 +9,7 @@ import InfoBulletin from '@/components/InfoBulletin';
 import HODSection from '@/components/HODSection';
 import EventGallery from '@/components/EventGallery';
 import TestimonialsSection from '@/components/TestimonialsSection';
+import BranchesSection from '@/components/BranchesSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -45,6 +46,7 @@ const Index: React.FC = () => {
       <EventGallery />
       <InitiativesSection />
       <TestimonialsSection />
+      <BranchesSection />
       <ContactSection />
       <Footer />
       <Toaster />
