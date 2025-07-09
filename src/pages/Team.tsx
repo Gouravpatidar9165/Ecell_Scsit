@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import RevealAnimation from '@/components/RevealAnimation';
@@ -11,12 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem
-} from "@/components/ui/carousel";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SocialLink {
   id?: string;
@@ -60,7 +54,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
           <ImageWithFallback
             src={imageSrc}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            className="w-full h-full object-cover"
           />
         </div>
         <div className="p-5 text-center">
@@ -91,8 +85,6 @@ const STAGGER_DELAY = 160;
 
 const Team: React.FC = () => {
   const [selectedBatch, setSelectedBatch] = useState<string>('2024-25');
-  const [api, setApi] = useState<any>(null);
-  const isMobile = useIsMobile();
 
   const fetchTeamMembers = async (): Promise<TeamMember[]> => {
     const { data: members, error } = await supabase
@@ -132,27 +124,17 @@ const Team: React.FC = () => {
     queryFn: fetchTeamMembers
   });
 
-  useEffect(() => {
-    if (!api) return;
-    
-    const autoPlayInterval = setInterval(() => {
-      api.scrollNext();
-    }, 5000);
-    
-    return () => clearInterval(autoPlayInterval);
-  }, [api]);
-
   if (isLoading) {
     return (
-      <div className="min-h-screen py-24 px-4 bg-secondary/30 tech-gradient">
+      <div className="min-h-screen py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Our Team</h1>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
             <div className="h-10 bg-gray-200 animate-pulse rounded mb-8 w-48 mx-auto"></div>
           </div>
           
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((n) => (
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {[1, 2, 3, 4].map((n) => (
               <div key={n} className="bg-white dark:bg-black rounded-lg overflow-hidden h-full">
                 <div className="aspect-[3/4] bg-gray-200 animate-pulse"></div>
                 <div className="p-5 text-center">
@@ -173,9 +155,9 @@ const Team: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen py-24 px-4 bg-secondary/30 tech-gradient">
+      <div className="min-h-screen py-24 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Our Team</h1>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
           <p className="text-destructive">Error loading team members. Please try again later.</p>
         </div>
       </div>
@@ -183,12 +165,12 @@ const Team: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen py-24 px-4 bg-secondary/30 tech-gradient">
+    <div className="min-h-screen py-24 px-4">
       <div className="max-w-7xl mx-auto">
         <RevealAnimation>
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Our Team</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
+            <p className="text-white/80 max-w-2xl mx-auto mb-8">
               Meet the dedicated individuals committed to fostering innovation and entrepreneurship in our community.
             </p>
             
@@ -208,35 +190,21 @@ const Team: React.FC = () => {
         
         {members.length === 0 ? (
           <div className="text-center p-8">
-            <p className="text-muted-foreground">No team members found for the selected batch.</p>
+            <p className="text-white/80">No team members found for the selected batch.</p>
           </div>
         ) : (
-          <Carousel 
-            opts={{ 
-              align: "start",
-              slidesToScroll: isMobile ? 1 : 3,
-              loop: true
-            }}
-            className="w-full"
-            setApi={setApi}
-          >
-            <CarouselContent className="-ml-4">
-              {members.map((member, index) => (
-                <CarouselItem 
-                  key={member.id} 
-                  className={isMobile ? "pl-4 basis-full" : "pl-4 md:basis-1/3"}
-                >
-                  <TeamMember
-                    name={member.name}
-                    position={member.position}
-                    imageSrc={member.image_url}
-                    socialLinks={member.socialLinks}
-                    delay={index * STAGGER_DELAY}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {members.map((member, index) => (
+              <TeamMember
+                key={member.id}
+                name={member.name}
+                position={member.position}
+                imageSrc={member.image_url}
+                socialLinks={member.socialLinks}
+                delay={index * STAGGER_DELAY}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
