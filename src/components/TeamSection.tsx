@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import RevealAnimation from './RevealAnimation';
 import ImageWithFallback from './ImageWithFallback';
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
@@ -20,6 +22,7 @@ interface TeamMember {
   name: string;
   position: string;
   image_url: string;
+  batch_year: string;
   socialLinks: SocialLink[];
 }
 
@@ -32,7 +35,6 @@ interface TeamMemberProps {
 }
 
 const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socialLinks, delay = 0 }) => {
-  // Function to get the appropriate icon color based on the platform
   const getSocialIconColor = (platform: string) => {
     switch (platform) {
       case 'linkedin': return 'bg-[#0A66C2]';
@@ -78,7 +80,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socia
   );
 };
 
-const STAGGER_DELAY = 160; // ms - increase for clearer effect
+const STAGGER_DELAY = 160;
 
 const TeamSection: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -87,13 +89,12 @@ const TeamSection: React.FC = () => {
   const [api, setApi] = useState<any>(null);
   const isMobile = useIsMobile();
 
-  // Auto-scroll carousel
   useEffect(() => {
     if (!api) return;
     
     const autoPlayInterval = setInterval(() => {
       api.scrollNext();
-    }, 5000); // Scroll every 5 seconds
+    }, 5000);
     
     return () => clearInterval(autoPlayInterval);
   }, [api]);
@@ -104,17 +105,18 @@ const TeamSection: React.FC = () => {
         setIsLoading(true);
         setError(null);
         
-        // Fetch team members
+        // Fetch only latest batch members for preview (limit to 6)
         const { data: members, error: membersError } = await supabase
           .from('team_members')
           .select('*')
-          .order('created_at', { ascending: false });
+          .eq('batch_year', '2024-25')
+          .order('created_at', { ascending: false })
+          .limit(6);
 
         if (membersError) {
           throw new Error(`Error fetching team members: ${membersError.message}`);
         }
 
-        // Fetch social links for each member
         const membersWithLinks = await Promise.all(
           members.map(async (member) => {
             const { data: socialLinks, error: linksError } = await supabase
@@ -144,7 +146,7 @@ const TeamSection: React.FC = () => {
         if (savedMembers) {
           try {
             setTeamMembers(JSON.parse(savedMembers));
-            setError(null); // Clear error if we could load from localStorage
+            setError(null);
           } catch (parseErr) {
             console.error("Error parsing team members from localStorage:", parseErr);
           }
@@ -210,6 +212,7 @@ const TeamSection: React.FC = () => {
       name: "Alex Johnson",
       position: "President",
       image_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=761&q=80",
+      batch_year: "2024-25",
       socialLinks: [
         { icon: "linkedin", url: "#" },
         { icon: "twitter", url: "#" },
@@ -221,6 +224,7 @@ const TeamSection: React.FC = () => {
       name: "Sophia Martinez",
       position: "Vice President",
       image_url: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
+      batch_year: "2024-25",
       socialLinks: [
         { icon: "linkedin", url: "#" },
         { icon: "twitter", url: "#" }
@@ -231,39 +235,10 @@ const TeamSection: React.FC = () => {
       name: "David Chen",
       position: "Secretary",
       image_url: "https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=769&q=80",
+      batch_year: "2024-25",
       socialLinks: [
         { icon: "linkedin", url: "#" },
         { icon: "instagram", url: "#" }
-      ]
-    },
-    {
-      id: "4",
-      name: "Emma Wilson",
-      position: "Treasurer",
-      image_url: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" }
-      ]
-    },
-    {
-      id: "5",
-      name: "Michael Rodriguez",
-      position: "Marketing Lead",
-      image_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "instagram", url: "#" }
-      ]
-    },
-    {
-      id: "6",
-      name: "Jessica Kim",
-      position: "Events Coordinator",
-      image_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      socialLinks: [
-        { icon: "linkedin", url: "#" },
-        { icon: "twitter", url: "#" }
       ]
     }
   ];
@@ -293,11 +268,11 @@ const TeamSection: React.FC = () => {
             slidesToScroll: isMobile ? 1 : 3,
             loop: true
           }}
-          className="w-full"
+          className="w-full mb-8"
           setApi={setApi}
         >
           <CarouselContent className="-ml-4">
-            {displayMembers.map((member, index) => (
+            {displayMembers.slice(0, 6).map((member, index) => (
               <CarouselItem 
                 key={member.id} 
                 className={isMobile ? "pl-4 basis-full" : "pl-4 md:basis-1/3"}
@@ -313,6 +288,16 @@ const TeamSection: React.FC = () => {
             ))}
           </CarouselContent>
         </Carousel>
+
+        <RevealAnimation delay={400}>
+          <div className="text-center">
+            <Link to="/team">
+              <Button size="lg" className="px-8 py-3">
+                View All Team Members
+              </Button>
+            </Link>
+          </div>
+        </RevealAnimation>
       </div>
     </section>
   );

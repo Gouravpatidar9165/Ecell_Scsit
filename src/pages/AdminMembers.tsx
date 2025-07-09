@@ -12,8 +12,15 @@ import {
   DialogTitle, 
   DialogTrigger
 } from "@/components/ui/dialog";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2, Edit, UserPlus, Link as LinkIcon, Upload } from "lucide-react";
+import { Trash2, Edit, UserPlus, Upload } from "lucide-react";
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -29,16 +36,19 @@ interface TeamMember {
   name: string;
   position: string;
   image_url: string;
+  batch_year: string;
   socialLinks: SocialLink[];
 }
 
 const AdminMembers: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [selectedBatch, setSelectedBatch] = useState<string>('2024-25');
   const [formData, setFormData] = useState({
     name: '',
     position: '',
     imageSrc: '',
+    batchYear: '2024-25',
     linkedinUrl: '',
     twitterUrl: '',
     instagramUrl: '',
@@ -63,12 +73,10 @@ const AdminMembers: React.FC = () => {
       setUploadProgress(0);
       setUploadError(null);
 
-      // Create a unique file name
       const fileExt = file.name.split('.').pop();
       const fileName = `member_${Date.now()}.${fileExt}`;
       const filePath = `members/${fileName}`;
 
-      // Upload progress simulation
       const interval = setInterval(() => {
         setUploadProgress(prev => {
           if (prev >= 95) {
@@ -79,7 +87,6 @@ const AdminMembers: React.FC = () => {
         });
       }, 100);
 
-      // Upload the file to Supabase Storage
       const { data, error } = await supabase.storage
         .from('uploads')
         .upload(filePath, file, {
@@ -89,11 +96,9 @@ const AdminMembers: React.FC = () => {
 
       if (error) throw error;
 
-      // Clear interval and set progress to 100%
       clearInterval(interval);
       setUploadProgress(100);
 
-      // Get public URL for the uploaded file
       const { data: { publicUrl } } = supabase.storage
         .from('uploads')
         .getPublicUrl(filePath);
@@ -126,13 +131,13 @@ const AdminMembers: React.FC = () => {
     const { data: members, error } = await supabase
       .from('team_members')
       .select('*')
+      .eq('batch_year', selectedBatch)
       .order('created_at', { ascending: false });
 
     if (error) {
       throw new Error(`Error fetching team members: ${error.message}`);
     }
 
-    // Fetch social links for each member
     const membersWithLinks = await Promise.all(
       members.map(async (member) => {
         const { data: socialLinks, error: linksError } = await supabase
@@ -156,20 +161,20 @@ const AdminMembers: React.FC = () => {
   };
 
   const { data: members = [], isLoading, error } = useQuery({
-    queryKey: ['team-members'],
+    queryKey: ['team-members', selectedBatch],
     queryFn: fetchTeamMembers
   });
 
   // Add a new team member
   const addMemberMutation = useMutation({
     mutationFn: async (newMember: Omit<TeamMember, 'id' | 'socialLinks'> & { socialLinks: Omit<SocialLink, 'id'>[] }) => {
-      // First insert the member
       const { data: memberData, error: memberError } = await supabase
         .from('team_members')
         .insert({
           name: newMember.name,
           position: newMember.position,
-          image_url: newMember.image_url
+          image_url: newMember.image_url,
+          batch_year: newMember.batch_year
         })
         .select()
         .single();
@@ -178,7 +183,6 @@ const AdminMembers: React.FC = () => {
         throw new Error(`Error adding team member: ${memberError.message}`);
       }
 
-      // Then insert social links if any
       if (newMember.socialLinks.length > 0) {
         const socialLinksToInsert = newMember.socialLinks.map(link => ({
           member_id: memberData.id,
@@ -218,13 +222,13 @@ const AdminMembers: React.FC = () => {
   // Update an existing team member
   const updateMemberMutation = useMutation({
     mutationFn: async (updatedMember: TeamMember) => {
-      // First update the member data
       const { error: memberError } = await supabase
         .from('team_members')
         .update({
           name: updatedMember.name,
           position: updatedMember.position,
-          image_url: updatedMember.image_url
+          image_url: updatedMember.image_url,
+          batch_year: updatedMember.batch_year
         })
         .eq('id', updatedMember.id);
 
@@ -232,7 +236,6 @@ const AdminMembers: React.FC = () => {
         throw new Error(`Error updating team member: ${memberError.message}`);
       }
 
-      // Delete all existing social links for this member
       const { error: deleteError } = await supabase
         .from('member_social_links')
         .delete()
@@ -242,7 +245,6 @@ const AdminMembers: React.FC = () => {
         throw new Error(`Error deleting old social links: ${deleteError.message}`);
       }
 
-      // Insert new social links if any
       if (updatedMember.socialLinks.length > 0) {
         const socialLinksToInsert = updatedMember.socialLinks.map(link => ({
           member_id: updatedMember.id,
@@ -282,7 +284,6 @@ const AdminMembers: React.FC = () => {
   // Delete a team member
   const deleteMemberMutation = useMutation({
     mutationFn: async (id: string) => {
-      // The member_social_links will be automatically deleted due to CASCADE
       const { error } = await supabase
         .from('team_members')
         .delete()
@@ -315,6 +316,7 @@ const AdminMembers: React.FC = () => {
       name: '',
       position: '',
       imageSrc: '',
+      batchYear: '2024-25',
       linkedinUrl: '',
       twitterUrl: '',
       instagramUrl: '',
@@ -336,11 +338,11 @@ const AdminMembers: React.FC = () => {
   const handleEditMember = (member: TeamMember) => {
     setEditingMember(member);
     
-    // Populate form with member data
     const formData = {
       name: member.name,
       position: member.position,
       imageSrc: member.image_url,
+      batchYear: member.batch_year,
       linkedinUrl: member.socialLinks.find(link => link.icon === 'linkedin')?.url || '',
       twitterUrl: member.socialLinks.find(link => link.icon === 'twitter')?.url || '',
       instagramUrl: member.socialLinks.find(link => link.icon === 'instagram')?.url || '',
@@ -369,20 +371,20 @@ const AdminMembers: React.FC = () => {
     if (formData.facebookUrl) socialLinks.push({ icon: 'facebook', url: formData.facebookUrl });
     
     if (editingMember) {
-      // Update existing member
       updateMemberMutation.mutate({
         id: editingMember.id,
         name: formData.name,
         position: formData.position,
         image_url: formData.imageSrc,
+        batch_year: formData.batchYear,
         socialLinks
       });
     } else {
-      // Add new member
       addMemberMutation.mutate({
         name: formData.name,
         position: formData.position,
         image_url: formData.imageSrc,
+        batch_year: formData.batchYear,
         socialLinks
       });
     }
@@ -447,6 +449,23 @@ const AdminMembers: React.FC = () => {
                     className="col-span-3"
                     required
                   />
+                </div>
+                
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="batchYear" className="text-right">
+                    Batch Year
+                  </Label>
+                  <div className="col-span-3">
+                    <Select value={formData.batchYear} onValueChange={(value) => setFormData({...formData, batchYear: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select batch year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="2024-25">2024-25</SelectItem>
+                        <SelectItem value="2023-24">2023-24</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-4 items-start gap-4">
@@ -577,6 +596,18 @@ const AdminMembers: React.FC = () => {
         </Dialog>
       </div>
 
+      <div className="flex justify-center mb-6">
+        <Select value={selectedBatch} onValueChange={setSelectedBatch}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select batch year" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="2024-25">Batch 2024-25</SelectItem>
+            <SelectItem value="2023-24">Batch 2023-24</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {isLoading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((n) => (
@@ -595,7 +626,7 @@ const AdminMembers: React.FC = () => {
         </div>
       ) : members.length === 0 ? (
         <div className="text-center p-8">
-          <p className="text-muted-foreground mb-4">No team members found. Add your first team member!</p>
+          <p className="text-muted-foreground mb-4">No team members found for the selected batch. Add your first team member!</p>
           <Button onClick={handleAddMember}>
             <UserPlus className="mr-2 h-4 w-4" />
             Add Team Member
@@ -632,7 +663,8 @@ const AdminMembers: React.FC = () => {
               </div>
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold">{member.name}</h3>
-                <p className="text-muted-foreground text-sm mb-3">{member.position}</p>
+                <p className="text-muted-foreground text-sm mb-1">{member.position}</p>
+                <p className="text-blue-500 text-xs mb-3 font-medium">Batch {member.batch_year}</p>
                 
                 <div className="flex gap-2">
                   {member.socialLinks.map((link, index) => (
