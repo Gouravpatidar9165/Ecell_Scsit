@@ -91,6 +91,18 @@ const Navbar: React.FC = () => {
               Initiatives
             </a>
             <Link
+              to="/gallery"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              Gallery
+            </Link>
+            <Link
+              to="/blog"
+              className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
+            >
+              Blog
+            </Link>
+            <Link
               to="/team"
               className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
             >
@@ -160,6 +172,20 @@ const Navbar: React.FC = () => {
               >
                 Initiatives
               </a>
+              <Link
+                to="/gallery"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Gallery
+              </Link>
+              <Link
+                to="/blog"
+                className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
               <Link
                 to="/team"
                 className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"

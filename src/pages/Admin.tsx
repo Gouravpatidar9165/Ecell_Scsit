@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import AdminMembers from './AdminMembers';
 import AdminGallery from './AdminGallery';
+import AdminBlog from './AdminBlog';
 import AdminBulletin from './AdminBulletin';
 import AdminLogin from './AdminLogin';
 import AdminSettings from './AdminSettings';
@@ -75,6 +76,12 @@ const AdminPanel: React.FC = () => {
                   Gallery
                 </Link>
                 <Link 
+                  to="/admin/blog" 
+                  className={`px-3 py-2 rounded-md ${location.pathname === '/admin/blog' ? 'bg-white/20' : 'hover:bg-white/10'}`}
+                >
+                  Blog
+                </Link>
+                <Link 
                   to="/admin/bulletin" 
                   className={`px-3 py-2 rounded-md ${location.pathname === '/admin/bulletin' ? 'bg-white/20' : 'hover:bg-white/10'}`}
                 >
@@ -110,6 +117,11 @@ const AdminPanel: React.FC = () => {
           <Route path="/gallery" element={
             <ProtectedRoute>
               <AdminGallery />
+            </ProtectedRoute>
+          } />
+          <Route path="/blog" element={
+            <ProtectedRoute>
+              <AdminBlog />
             </ProtectedRoute>
           } />
           <Route path="/bulletin" element={
