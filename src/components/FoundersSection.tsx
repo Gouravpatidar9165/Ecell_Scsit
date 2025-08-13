@@ -1,10 +1,8 @@
 import React from 'react';
 import RevealAnimation from "./RevealAnimation";
 import ImageWithFallback from "./ImageWithFallback";
-
 const FoundersSection: React.FC = () => {
-  return (
-    <section className="py-12 bg-background">
+  return <section className="py-12 bg-[#2d324b]">
       <div className="container mx-auto px-4">
         <RevealAnimation>
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-foreground">
@@ -18,11 +16,7 @@ const FoundersSection: React.FC = () => {
             <div className="bg-card rounded-lg shadow-md p-6 border border-border">
               <div className="text-center mb-4">
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-primary/20">
-                  <ImageWithFallback
-                    src="/images/suraj-karan-singh.jpg"
-                    alt="Suraj Karan Singh - Founder"
-                    className="w-full h-full object-cover"
-                  />
+                  <ImageWithFallback src="/images/suraj-karan-singh.jpg" alt="Suraj Karan Singh - Founder" className="w-full h-full object-cover" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-1">Suraj Karan Singh</h3>
                 <p className="text-primary font-semibold mb-3">Founder</p>
@@ -44,11 +38,7 @@ const FoundersSection: React.FC = () => {
             <div className="bg-card rounded-lg shadow-md p-6 border border-border">
               <div className="text-center mb-4">
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-primary/20">
-                  <ImageWithFallback
-                    src="/images/harsh.jpg"
-                    alt="Harsh Soni - Co-Founder"
-                    className="w-full h-full object-cover"
-                  />
+                  <ImageWithFallback src="/images/harsh.jpg" alt="Harsh Soni - Co-Founder" className="w-full h-full object-cover" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-1">Harsh Soni</h3>
                 <p className="text-primary font-semibold mb-3">Co-Founder</p>
@@ -63,8 +53,6 @@ const FoundersSection: React.FC = () => {
           </RevealAnimation>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default FoundersSection;
