@@ -65,7 +65,7 @@ const TestimonialsSection: React.FC = () => {
 
   if (loading) {
     return (
-      <section className="testimonials-section px-4 py-8 bg-secondary">
+      <section className="testimonials-section px-4 py-8 bg-background">
         <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
           Testimonials
         </h2>
@@ -78,7 +78,7 @@ const TestimonialsSection: React.FC = () => {
 
   if (testimonials.length === 0) {
     return (
-      <section className="testimonials-section px-4 py-8 bg-secondary">
+      <section className="testimonials-section px-4 py-8 bg-background">
         <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
           Testimonials
         </h2>
@@ -90,7 +90,7 @@ const TestimonialsSection: React.FC = () => {
   }
 
   return (
-    <section className="testimonials-section px-4 py-8 bg-secondary">
+    <section className="testimonials-section px-4 py-8 bg-background">
       <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
         Testimonials
       </h2>
