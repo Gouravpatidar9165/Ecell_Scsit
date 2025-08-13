@@ -38,6 +38,45 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author: string
+          created_at: string
+          description: string
+          featured_image_url: string | null
+          id: string
+          medium_url: string
+          published_date: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          created_at?: string
+          description: string
+          featured_image_url?: string | null
+          id?: string
+          medium_url: string
+          published_date: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          description?: string
+          featured_image_url?: string | null
+          id?: string
+          medium_url?: string
+          published_date?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bulletin_items: {
         Row: {
           attachment_name: string | null
@@ -163,6 +202,36 @@ export type Database = {
           name?: string
           position?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          message: string
+          name: string
+          position: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          message: string
+          name: string
+          position?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          message?: string
+          name?: string
+          position?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

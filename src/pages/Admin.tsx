@@ -7,6 +7,7 @@ import AdminMembers from './AdminMembers';
 import AdminGallery from './AdminGallery';
 import AdminBlog from './AdminBlog';
 import AdminBulletin from './AdminBulletin';
+import AdminTestimonials from './AdminTestimonials';
 import AdminLogin from './AdminLogin';
 import AdminSettings from './AdminSettings';
 
@@ -88,6 +89,12 @@ const AdminPanel: React.FC = () => {
                   Announcements
                 </Link>
                 <Link 
+                  to="/admin/testimonials" 
+                  className={`px-3 py-2 rounded-md ${location.pathname === '/admin/testimonials' ? 'bg-white/20' : 'hover:bg-white/10'}`}
+                >
+                  Testimonials
+                </Link>
+                <Link 
                   to="/admin/settings" 
                   className={`px-3 py-2 rounded-md ${location.pathname === '/admin/settings' ? 'bg-white/20' : 'hover:bg-white/10'}`}
                 >
@@ -127,6 +134,11 @@ const AdminPanel: React.FC = () => {
           <Route path="/bulletin" element={
             <ProtectedRoute>
               <AdminBulletin />
+            </ProtectedRoute>
+          } />
+          <Route path="/testimonials" element={
+            <ProtectedRoute>
+              <AdminTestimonials />
             </ProtectedRoute>
           } />
           <Route path="/settings" element={
