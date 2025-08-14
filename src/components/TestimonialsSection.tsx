@@ -52,29 +52,34 @@ const TestimonialsSection: React.FC = () => {
     return () => clearInterval(interval);
   }, [testimonials.length]);
   if (loading) {
-    return <section className="testimonials-section px-4 py-8 bg-background">
-        <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
-          Testimonials
-        </h2>
+    return <section className="testimonials-section px-4 py-8 tech-gradient relative">{/* Updated background */}
+        <div className="relative z-10">{/* Ensure content is above gradient overlay */}
+          <h2 className="text-2xl font-bold mb-8 text-center text-white">
+            Testimonials
+          </h2>
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
         </div>
       </section>;
   }
   if (testimonials.length === 0) {
-    return <section className="testimonials-section px-4 py-8 bg-background">
-        <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
-          Testimonials
-        </h2>
-        <div className="text-center text-muted-foreground">
-          No testimonials available at the moment.
+    return <section className="testimonials-section px-4 py-8 tech-gradient relative">{/* Updated background */}
+        <div className="relative z-10">{/* Ensure content is above gradient overlay */}
+          <h2 className="text-2xl font-bold mb-8 text-center text-white">
+            Testimonials
+          </h2>
+          <div className="text-center text-white/70">
+            No testimonials available at the moment.
+          </div>
         </div>
       </section>;
   }
-  return <section className="testimonials-section px-4 py-8 bg-[#2a304c]/[0.33]">
-      <h2 className="text-2xl font-bold mb-8 text-center text-foreground">
-        Testimonials
-      </h2>
+  return <section className="testimonials-section px-4 py-8 tech-gradient relative">{/* Updated background */}
+      <div className="relative z-10">{/* Ensure content is above gradient overlay */}
+        <h2 className="text-2xl font-bold mb-8 text-center text-white">
+          Testimonials
+        </h2>
       <div className="max-w-2xl md:max-w-3xl lg:max-w-6xl mx-auto relative">
         <Carousel opts={{
         loop: true,
@@ -87,7 +92,7 @@ const TestimonialsSection: React.FC = () => {
           <CarouselContent>
             {testimonials.map((testimonial, index) => <CarouselItem key={index} className={`flex justify-center items-stretch pb-8` + (isMobile ? " basis-full max-w-[90vw]" : " basis-1/3 max-w-[400px]") + " transition-all duration-300"}>
                 <RevealAnimation delay={index * ANIMATION_STAGGER} className="h-full w-full">
-                  <div className="testimonial-card flex flex-col p-6 border rounded-lg shadow-lg bg-card w-full h-full max-w-md min-h-[220px] mx-auto">
+                  <div className="testimonial-card flex flex-col p-6 border rounded-lg shadow-lg glass-effect w-full h-full max-w-md min-h-[220px] mx-auto border-white/20">{/* Updated to glass effect */}
                     <div className="flex flex-col items-center flex-1">
                       {testimonial.image_url ? (
                         <img src={testimonial.image_url} alt={testimonial.name} className="w-20 h-20 rounded-full mb-4 object-cover" />
@@ -98,13 +103,13 @@ const TestimonialsSection: React.FC = () => {
                           </span>
                         </div>
                       )}
-                      <h3 className="font-semibold text-lg mb-2 text-foreground text-center">
+                      <h3 className="font-semibold text-lg mb-2 text-white text-center">
                         {testimonial.name}
                       </h3>
-                      <p className="text-muted-foreground text-center whitespace-pre-line break-words">
+                      <p className="text-white/70 text-center whitespace-pre-line break-words">
                         {testimonial.message}
                       </p>
-                      {testimonial.position && <span className="mt-2 text-xs text-muted-foreground italic">{testimonial.position}</span>}
+                      {testimonial.position && <span className="mt-2 text-xs text-white/60 italic">{testimonial.position}</span>}
                     </div>
                   </div>
                 </RevealAnimation>
@@ -114,6 +119,7 @@ const TestimonialsSection: React.FC = () => {
           <CarouselNext className={isMobile ? "right-2" : "right-8"} />
         </Carousel>
       </div>
+    </div>
     </section>;
 };
 export default TestimonialsSection;
