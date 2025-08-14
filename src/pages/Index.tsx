@@ -8,7 +8,7 @@ import InitiativesSection from '@/components/InitiativesSection';
 import InfoBulletin from '@/components/InfoBulletin';
 import HODSection from '@/components/HODSection';
 import FoundersSection from '@/components/FoundersSection';
-import EventGallery from '@/components/EventGallery';
+
 import TestimonialsSection from '@/components/TestimonialsSection';
 import BranchesSection from '@/components/BranchesSection';
 import ContactSection from '@/components/ContactSection';
@@ -45,7 +45,7 @@ const Index: React.FC = () => {
       <HODSection />
       <FoundersSection />
       <AboutSection />
-      <EventGallery />
+      
       <InitiativesSection />
       <TestimonialsSection />
       <BranchesSection />
