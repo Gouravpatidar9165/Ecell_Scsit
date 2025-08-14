@@ -78,18 +78,18 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#about"
+            <Link
+              to="/#about"
               className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
             >
               About
-            </a>
-            <a
-              href="#initiatives"
+            </Link>
+            <Link
+              to="/#initiatives"
               className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
             >
               Initiatives
-            </a>
+            </Link>
             <Link
               to="/gallery"
               className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
@@ -108,12 +108,12 @@ const Navbar: React.FC = () => {
             >
               Team
             </Link>
-            <a
-              href="#contact"
+            <Link
+              to="/#contact"
               className="text-sm font-medium hover:text-black/70 dark:hover:text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-black dark:after:bg-white after:transition-all hover:after:w-full"
             >
               Contact
-            </a>
+            </Link>
             <Link
               to="/admin"
               className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
@@ -158,20 +158,20 @@ const Navbar: React.FC = () => {
             className="fixed inset-0 z-40 bg-white/70 dark:bg-black/70 backdrop-blur-xl flex flex-col items-center justify-center"
           >
             <nav className="flex flex-col items-center space-y-8">
-              <a
-                href="#about"
+              <Link
+                to="/#about"
                 className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
-              </a>
-              <a
-                href="#initiatives"
+              </Link>
+              <Link
+                to="/#initiatives"
                 className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Initiatives
-              </a>
+              </Link>
               <Link
                 to="/gallery"
                 className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
@@ -193,13 +193,13 @@ const Navbar: React.FC = () => {
               >
                 Team
               </Link>
-              <a
-                href="#contact"
+              <Link
+                to="/#contact"
                 className="text-2xl font-medium text-black dark:text-white hover:text-black/70 dark:hover:text-white/70 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Contact
-              </a>
+              </Link>
               <Link
                 to="/admin"
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
