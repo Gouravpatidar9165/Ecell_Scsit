@@ -11,7 +11,7 @@ interface Testimonial {
   id: string;
   name: string;
   message: string;
-  image_url: string;
+  image_url: string | null;
   position?: string;
   created_at: string;
 }
@@ -85,7 +85,7 @@ const AdminTestimonials: React.FC = () => {
         name: formData.name,
         message: formData.message,
         position: formData.position || null,
-        image_url: imageUrl
+        image_url: imageUrl || null
       };
 
       if (editingId) {
@@ -213,7 +213,8 @@ const AdminTestimonials: React.FC = () => {
             />
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Photo</label>
+              <label className="text-sm font-medium text-foreground">Photo (Optional)</label>
+              <p className="text-xs text-muted-foreground mb-2">Upload a photo or leave empty for default avatar</p>
               <Input
                 type="file"
                 accept="image/*"
@@ -252,11 +253,19 @@ const AdminTestimonials: React.FC = () => {
           <Card key={testimonial.id}>
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
-                <img
-                  src={testimonial.image_url}
-                  alt={testimonial.name}
-                  className="w-16 h-16 rounded-full object-cover"
-                />
+                {testimonial.image_url ? (
+                  <img
+                    src={testimonial.image_url}
+                    alt={testimonial.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary font-semibold text-xl">
+                      {testimonial.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">{testimonial.name}</h3>
                   {testimonial.position && (

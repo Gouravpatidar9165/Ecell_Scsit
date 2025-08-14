@@ -7,7 +7,7 @@ interface Testimonial {
   id: string;
   name: string;
   message: string;
-  image_url: string;
+  image_url: string | null;
   position?: string;
 }
 const AUTO_SLIDE_INTERVAL = 3500; // milliseconds
@@ -89,7 +89,15 @@ const TestimonialsSection: React.FC = () => {
                 <RevealAnimation delay={index * ANIMATION_STAGGER} className="h-full w-full">
                   <div className="testimonial-card flex flex-col p-6 border rounded-lg shadow-lg bg-card w-full h-full max-w-md min-h-[220px] mx-auto">
                     <div className="flex flex-col items-center flex-1">
-                      <img src={testimonial.image_url} alt={testimonial.name} className="w-20 h-20 rounded-full mb-4 object-cover" />
+                      {testimonial.image_url ? (
+                        <img src={testimonial.image_url} alt={testimonial.name} className="w-20 h-20 rounded-full mb-4 object-cover" />
+                      ) : (
+                        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                          <span className="text-primary font-semibold text-2xl">
+                            {testimonial.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
                       <h3 className="font-semibold text-lg mb-2 text-foreground text-center">
                         {testimonial.name}
                       </h3>
