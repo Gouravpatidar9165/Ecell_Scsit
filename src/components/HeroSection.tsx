@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import TextPressure from './TextPressure';
 
 const HeroSection: React.FC = () => {
   const [currentWord, setCurrentWord] = useState(0);
@@ -49,30 +50,39 @@ const HeroSection: React.FC = () => {
           <span className="inline-block py-1 px-3 mb-4 text-xs tracking-wider uppercase rounded-full bg-secondary text-primary font-medium">Entrepreneurship Cell</span>
         </motion.div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight md:leading-tight tracking-tight mb-6 text-white">
-          <motion.span
-            className="block mb-2"
-            variants={sentence}
-            initial="hidden"
-            animate="visible"
+        <div className="mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mb-4"
           >
-            Empowering Students To
-          </motion.span>
-          <span className="relative inline-block overflow-hidden h-[1.2em] align-bottom">
-            {words.map((word, index) => (
-              <motion.span
-                key={word}
-                className={`absolute inset-0 ${currentWord === index ? 'block' : 'hidden'}`}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -50, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">{word}</span>
-              </motion.span>
-            ))}
-          </span>
-        </h1>
+            <span className="text-white text-xl md:text-2xl lg:text-3xl font-medium tracking-wide">
+              Empowering Students To
+            </span>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            style={{ position: 'relative', height: '200px' }}
+          >
+            <TextPressure
+              text="INNOVATE"
+              flex={true}
+              alpha={false}
+              stroke={false}
+              width={true}
+              weight={true}
+              italic={true}
+              textColor="#ffffff"
+              strokeColor="#ff0000"
+              minFontSize={48}
+              className="font-bold"
+            />
+          </motion.div>
+        </div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
