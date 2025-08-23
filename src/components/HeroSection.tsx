@@ -101,13 +101,13 @@ const HeroSection: React.FC = () => {
         >
           <a
             href="#about"
-            className="px-8 py-3 bg-primary text-primary-foreground font-medium rounded-md transition-all duration-200 hover:shadow-lg hover:transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="cursor-target px-8 py-3 bg-primary text-primary-foreground font-medium rounded-md transition-all duration-200 hover:shadow-lg hover:transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Learn More
           </a>
           <a
             href="#initiatives"
-            className="px-8 py-3 bg-secondary text-secondary-foreground font-medium rounded-md transition-all duration-200 hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="cursor-target px-8 py-3 bg-secondary text-secondary-foreground font-medium rounded-md transition-all duration-200 hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Our Initiatives
           </a>
