@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TextPressure from './TextPressure';
+import LightRays from './LightRays';
 
 const HeroSection: React.FC = () => {
   const [currentWord, setCurrentWord] = useState(0);
@@ -37,6 +38,18 @@ const HeroSection: React.FC = () => {
   return (
     <section className="min-h-screen flex flex-col justify-center items-center px-4 pt-20 pb-28 relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#00ffff"
+          raysSpeed={1.5}
+          lightSpread={0.8}
+          rayLength={1.2}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.05}
+          className="custom-rays"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background"></div>
       </div>
 
