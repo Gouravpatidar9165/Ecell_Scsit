@@ -14,7 +14,6 @@ import BranchesSection from '@/components/BranchesSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import LoadingScreen from '@/components/LoadingScreen';
-import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack';
 
 const Index: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -42,45 +41,16 @@ const Index: React.FC = () => {
       <LoadingScreen />
       <Navbar />
       <HeroSection />
+      <InfoBulletin />
+      <HODSection />
+      <FoundersSection />
+      <AboutSection />
       
-      <ScrollStack className="h-screen">
-        <ScrollStackItem itemClassName="bg-background">
-          <InfoBulletin />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <HODSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <FoundersSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <AboutSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <InitiativesSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <TestimonialsSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <BranchesSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <ContactSection />
-        </ScrollStackItem>
-        
-        <ScrollStackItem itemClassName="bg-background">
-          <Footer />
-        </ScrollStackItem>
-      </ScrollStack>
-      
+      <InitiativesSection />
+      <TestimonialsSection />
+      <BranchesSection />
+      <ContactSection />
+      <Footer />
       <Toaster />
     </main>
   );
