@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Network, Shield, Blocks } from 'lucide-react';
+import { Network, Blocks } from 'lucide-react';
 import RevealAnimation from './RevealAnimation';
 
 interface Branch {
@@ -35,18 +35,6 @@ const branches: Branch[] = [
       "DeFi applications",
       "NFT creation workshops",
       "Cryptocurrency trading strategies"
-    ]
-  },
-  {
-    title: "Cyber Security Club",
-    description: "Building secure systems and ethical hacking skills",
-    icon: <Shield className="w-12 h-12 text-red-500" />,
-    status: "Coming Soon",
-    details: [
-      "Penetration testing",
-      "Security audits",
-      "Ethical hacking workshops",
-      "Cybersecurity awareness programs"
     ]
   }
 ];
