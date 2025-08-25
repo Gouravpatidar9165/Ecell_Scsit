@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useMemo } from "react";
 import { gsap } from "gsap";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface TargetCursorProps {
   targetSelector?: string;
@@ -8,10 +9,11 @@ export interface TargetCursorProps {
 }
 
 const TargetCursor: React.FC<TargetCursorProps> = ({
-  targetSelector = ".cursor-target",
+  targetSelector = "button, .btn, a[href], nav a, [role='button'], .cursor-target",
   spinDuration = 2,
   hideDefaultCursor = true,
 }) => {
+  const isMobile = useIsMobile();
   const cursorRef = useRef<HTMLDivElement>(null);
   const cornersRef = useRef<NodeListOf<HTMLDivElement>>(null);
   const spinTl = useRef<gsap.core.Timeline>(null);
@@ -333,6 +335,11 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
         .to(cursorRef.current, { rotation: "+=360", duration: spinDuration, ease: "none" });
     }
   }, [spinDuration]);
+
+  // Don't render on mobile
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <div 

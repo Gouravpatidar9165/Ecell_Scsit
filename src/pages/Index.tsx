@@ -8,12 +8,12 @@ import InitiativesSection from '@/components/InitiativesSection';
 import InfoBulletin from '@/components/InfoBulletin';
 import HODSection from '@/components/HODSection';
 import FoundersSection from '@/components/FoundersSection';
-
 import TestimonialsSection from '@/components/TestimonialsSection';
 import BranchesSection from '@/components/BranchesSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import LoadingScreen from '@/components/LoadingScreen';
+import TargetCursor from '@/components/TargetCursor';
 
 const Index: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -52,6 +52,11 @@ const Index: React.FC = () => {
       <ContactSection />
       <Footer />
       <Toaster />
+      <TargetCursor 
+        targetSelector="button, .btn, a[href], nav a, [role='button'], .cursor-target"
+        spinDuration={2}
+        hideDefaultCursor={true}
+      />
     </main>
   );
 };
