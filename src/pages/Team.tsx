@@ -130,7 +130,7 @@ const Team: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen py-24 px-4">
+      <div className="tech-gradient py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
@@ -159,7 +159,7 @@ const Team: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen py-24 px-4">
+      <div className="tech-gradient py-24 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
           <p className="text-destructive">Error loading team members. Please try again later.</p>
@@ -169,7 +169,7 @@ const Team: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen py-24 px-4">
+    <div className="tech-gradient py-24 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Button 

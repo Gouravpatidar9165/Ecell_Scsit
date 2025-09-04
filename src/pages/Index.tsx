@@ -37,7 +37,7 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <main className="min-h-screen overflow-x-hidden">
+    <main className="tech-gradient overflow-x-hidden">
       <LoadingScreen />
       <Navbar />
       <HeroSection />

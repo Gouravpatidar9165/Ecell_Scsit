@@ -55,7 +55,7 @@ const Blog = () => {
   };
 
   return (
-    <div className="min-h-screen tech-gradient">
+    <div className="tech-gradient">
       <Navbar />
       <main className="pt-20 relative z-10">
         <section className="py-20 px-4">
