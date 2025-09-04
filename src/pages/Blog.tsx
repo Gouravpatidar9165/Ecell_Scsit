@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import RevealAnimation from '@/components/RevealAnimation';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { supabase } from '@/integrations/supabase/client';
@@ -152,7 +151,6 @@ const Blog = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };

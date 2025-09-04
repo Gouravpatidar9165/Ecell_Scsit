@@ -1,9 +1,12 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import RevealAnimation from '@/components/RevealAnimation';
 import ImageWithFallback from '@/components/ImageWithFallback';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from 'lucide-react';
 import { 
   Select,
   SelectContent,
@@ -85,6 +88,7 @@ const STAGGER_DELAY = 160;
 
 const Team: React.FC = () => {
   const [selectedBatch, setSelectedBatch] = useState<string>('2024-25');
+  const navigate = useNavigate();
 
   const fetchTeamMembers = async (): Promise<TeamMember[]> => {
     const { data: members, error } = await supabase
@@ -167,6 +171,16 @@ const Team: React.FC = () => {
   return (
     <div className="min-h-screen py-24 px-4">
       <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <Button 
+            onClick={() => navigate(-1)} 
+            variant="outline" 
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 backdrop-blur-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+        </div>
         <RevealAnimation>
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">Our Team</h1>
