@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import RevealAnimation from '@/components/RevealAnimation';
-import ImageWithFallback from '@/components/ImageWithFallback';
+import ChromaGrid, { ChromaItem } from '@/components/ChromaGrid';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from 'lucide-react';
 import { 
@@ -30,61 +30,17 @@ interface TeamMember {
   socialLinks: SocialLink[];
 }
 
-interface TeamMemberProps {
-  name: string;
-  position: string;
-  imageSrc: string;
-  socialLinks: { icon: string; url: string }[];
-  delay?: number;
-}
-
-const TeamMember: React.FC<TeamMemberProps> = ({ name, position, imageSrc, socialLinks, delay = 0 }) => {
-  const getSocialIconColor = (platform: string) => {
-    switch (platform) {
-      case 'linkedin': return 'bg-[#0A66C2]';
-      case 'twitter': return 'bg-[#1DA1F2]';
-      case 'instagram': return 'bg-[#E4405F]';
-      case 'facebook': return 'bg-[#1877F2]';
-      case 'github': return 'bg-[#171515]';
-      default: return 'bg-[#6e5494]';
-    }
-  };
-
-  return (
-    <RevealAnimation delay={delay} className="h-full">
-      <div className="team-card relative bg-white dark:bg-black rounded-lg overflow-hidden h-full">
-        <div className="overflow-hidden aspect-[3/4]">
-          <ImageWithFallback
-            src={imageSrc}
-            alt={name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="p-5 text-center">
-          <h3 className="text-xl font-semibold mb-1 text-primary">{name}</h3>
-          <p className="text-blue-500 text-sm mb-3 font-medium">{position}</p>
-          
-          <div className="flex justify-center space-x-3">
-            {socialLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`w-8 h-8 flex items-center justify-center rounded-full ${getSocialIconColor(link.icon)} text-white hover:opacity-90 transition-opacity duration-300`}
-                aria-label={`${name}'s ${link.icon}`}
-              >
-                <i className={`fab fa-${link.icon}`}></i>
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </RevealAnimation>
-  );
-};
-
-const STAGGER_DELAY = 160;
+// Color schemes for ChromaGrid cards
+const colorSchemes = [
+  { borderColor: '#4F46E5', gradient: 'linear-gradient(145deg,#4F46E5,#000)' },
+  { borderColor: '#10B981', gradient: 'linear-gradient(210deg,#10B981,#000)' },
+  { borderColor: '#F59E0B', gradient: 'linear-gradient(165deg,#F59E0B,#000)' },
+  { borderColor: '#EF4444', gradient: 'linear-gradient(195deg,#EF4444,#000)' },
+  { borderColor: '#8B5CF6', gradient: 'linear-gradient(225deg,#8B5CF6,#000)' },
+  { borderColor: '#06B6D4', gradient: 'linear-gradient(135deg,#06B6D4,#000)' },
+  { borderColor: '#EC4899', gradient: 'linear-gradient(180deg,#EC4899,#000)' },
+  { borderColor: '#F97316', gradient: 'linear-gradient(270deg,#F97316,#000)' },
+];
 
 const Team: React.FC = () => {
   const [selectedBatch, setSelectedBatch] = useState<string>('2024-25');
@@ -126,6 +82,22 @@ const Team: React.FC = () => {
   const { data: members = [], isLoading, error } = useQuery({
     queryKey: ['team-members', selectedBatch],
     queryFn: fetchTeamMembers
+  });
+
+  // Convert team members to ChromaGrid items
+  const chromaItems: ChromaItem[] = members.map((member, index) => {
+    const colorScheme = colorSchemes[index % colorSchemes.length];
+    const firstSocialLink = member.socialLinks?.[0];
+    
+    return {
+      image: member.image_url,
+      title: member.name,
+      subtitle: member.position,
+      handle: firstSocialLink ? `@${member.name.toLowerCase().replace(/\s+/g, '')}` : undefined,
+      borderColor: colorScheme.borderColor,
+      gradient: colorScheme.gradient,
+      url: firstSocialLink?.url
+    };
   });
 
   if (isLoading) {
@@ -207,17 +179,14 @@ const Team: React.FC = () => {
             <p className="text-white/80">No team members found for the selected batch.</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {members.map((member, index) => (
-              <TeamMember
-                key={member.id}
-                name={member.name}
-                position={member.position}
-                imageSrc={member.image_url}
-                socialLinks={member.socialLinks}
-                delay={index * STAGGER_DELAY}
-              />
-            ))}
+          <div style={{ height: '600px', position: 'relative' }}>
+            <ChromaGrid 
+              items={chromaItems}
+              radius={300}
+              damping={0.45}
+              fadeOut={0.6}
+              ease="power3.out"
+            />
           </div>
         )}
       </div>
