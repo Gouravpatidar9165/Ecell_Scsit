@@ -179,7 +179,7 @@ const Team: React.FC = () => {
             <p className="text-white/80">No team members found for the selected batch.</p>
           </div>
         ) : (
-          <div style={{ height: '600px', position: 'relative' }}>
+          <div style={{ position: 'relative', minHeight: '600px' }}>
             <ChromaGrid 
               items={chromaItems}
               radius={300}
