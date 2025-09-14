@@ -1,4 +1,4 @@
-
+{/*
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Network, Blocks } from 'lucide-react';
@@ -98,3 +98,4 @@ const BranchesSection: React.FC = () => {
 };
 
 export default BranchesSection;
+*/}
