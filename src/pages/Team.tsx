@@ -88,38 +88,73 @@ const Team: React.FC = () => {
   const chromaItems: ChromaItem[] = members.map((member, index) => {
     const colorScheme = colorSchemes[index % colorSchemes.length];
     
-    // Extract LinkedIn and Instagram links
-    const linkedinLink = member.socialLinks?.find(link => 
-      link.icon.toLowerCase().includes('linkedin') || 
-      link.url.toLowerCase().includes('linkedin')
-    );
-    const instagramLink = member.socialLinks?.find(link => 
-      link.icon.toLowerCase().includes('instagram') || 
-      link.url.toLowerCase().includes('instagram')
-    );
+    // Helper function to extract username from URL
+    const extractUsername = (url: string, platform: string): string => {
+      try {
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        
+        switch (platform) {
+          case 'linkedin':
+            // Extract from linkedin.com/in/username or linkedin.com/in/username/
+            const linkedinMatch = pathname.match(/\/in\/([^\/]+)/);
+            return linkedinMatch ? `@${linkedinMatch[1]}` : '';
+          
+          case 'instagram':
+            // Extract from instagram.com/username or instagram.com/username/
+            const instagramMatch = pathname.match(/\/([^\/]+)/);
+            return instagramMatch && instagramMatch[1] !== '' ? `@${instagramMatch[1]}` : '';
+          
+          case 'twitter':
+            // Extract from twitter.com/username or x.com/username
+            const twitterMatch = pathname.match(/\/([^\/]+)/);
+            return twitterMatch && twitterMatch[1] !== '' ? `@${twitterMatch[1]}` : '';
+          
+          default:
+            return '';
+        }
+      } catch (error) {
+        console.error(`Error parsing URL ${url}:`, error);
+        return '';
+      }
+    };
     
-    // Generate usernames from URLs or use member name
-    const linkedinHandle = linkedinLink ? 
-      (linkedinLink.url.includes('linkedin.com/in/') ? 
-        `@${linkedinLink.url.split('linkedin.com/in/')[1].split('/')[0]}` : 
-        `@${member.name.toLowerCase().replace(/\s+/g, '')}`) : 
-      undefined;
+    // Extract social handles from social links
+    const socialHandles: { linkedin?: string; instagram?: string; twitter?: string } = {};
     
-    const instagramHandle = instagramLink ? 
-      (instagramLink.url.includes('instagram.com/') ? 
-        `@${instagramLink.url.split('instagram.com/')[1].split('/')[0]}` : 
-        `@${member.name.toLowerCase().replace(/\s+/g, '')}_ig`) : 
-      undefined;
+    member.socialLinks?.forEach(link => {
+      const url = link.url.toLowerCase();
+      const icon = link.icon.toLowerCase();
+      
+      if (url.includes('linkedin.com') || icon.includes('linkedin')) {
+        const username = extractUsername(link.url, 'linkedin');
+        if (username) socialHandles.linkedin = username;
+      } else if (url.includes('instagram.com') || icon.includes('instagram')) {
+        const username = extractUsername(link.url, 'instagram');
+        if (username) socialHandles.instagram = username;
+      } else if (url.includes('twitter.com') || url.includes('x.com') || icon.includes('twitter')) {
+        const username = extractUsername(link.url, 'twitter');
+        if (username) socialHandles.twitter = username;
+      }
+    });
+    
+    // Get primary social link for click action (prioritize LinkedIn, then Instagram, then Twitter)
+    const primarySocialLink = member.socialLinks?.find(link => 
+      link.url.toLowerCase().includes('linkedin.com')
+    ) || member.socialLinks?.find(link => 
+      link.url.toLowerCase().includes('instagram.com')
+    ) || member.socialLinks?.find(link => 
+      link.url.toLowerCase().includes('twitter.com') || link.url.toLowerCase().includes('x.com')
+    );
     
     return {
       image: member.image_url,
       title: member.name,
       subtitle: member.position,
-      handle: linkedinHandle,
-      location: instagramHandle,
+      socialHandles,
       borderColor: colorScheme.borderColor,
       gradient: colorScheme.gradient,
-      url: linkedinLink?.url || instagramLink?.url
+      url: primarySocialLink?.url
     };
   });
 

@@ -10,6 +10,11 @@ export interface ChromaItem {
   borderColor?: string;
   gradient?: string;
   url?: string;
+  socialHandles?: {
+    linkedin?: string;
+    instagram?: string;
+    twitter?: string;
+  };
 }
 
 export interface ChromaGridProps {
@@ -184,11 +189,26 @@ const ChromaGrid: React.FC<ChromaGridProps> = ({
           <div className="relative z-10 flex-1 p-[10px] box-border">
             <img src={c.image} alt={c.title} loading="lazy" className="w-full h-full object-cover rounded-[10px]" />
           </div>
-          <footer className="relative z-10 p-3 text-white font-sans grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
-            <h3 className="m-0 text-[1.05rem] font-semibold">{c.title}</h3>
-            {c.handle && <span className="text-[0.95rem] opacity-80 text-right">{c.handle}</span>}
-            <p className="m-0 text-[0.85rem] opacity-85">{c.subtitle}</p>
-            {c.location && <span className="text-[0.85rem] opacity-85 text-right">{c.location}</span>}
+          <footer className="relative z-10 p-3 text-white font-sans">
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="m-0 text-[1.05rem] font-semibold">{c.title}</h3>
+              {c.socialHandles?.linkedin && (
+                <span className="text-[0.8rem] opacity-80">
+                  {c.socialHandles.linkedin}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between items-end">
+              <p className="m-0 text-[0.85rem] opacity-85">{c.subtitle}</p>
+              <div className="flex flex-col items-end text-[0.8rem] opacity-75 space-y-1">
+                {c.socialHandles?.instagram && (
+                  <span>{c.socialHandles.instagram}</span>
+                )}
+                {c.socialHandles?.twitter && (
+                  <span>{c.socialHandles.twitter}</span>
+                )}
+              </div>
+            </div>
           </footer>
         </article>
       ))}
