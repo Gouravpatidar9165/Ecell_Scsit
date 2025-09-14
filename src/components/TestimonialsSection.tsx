@@ -115,8 +115,8 @@ const TestimonialsSection: React.FC = () => {
                 </RevealAnimation>
               </CarouselItem>)}
           </CarouselContent>
-          <CarouselPrevious className={isMobile ? "left-2" : "left-8"} />
-          <CarouselNext className={isMobile ? "right-2" : "right-8"} />
+          <CarouselPrevious className={isMobile ? "-left-4 top-1/2" : "-left-12 top-1/2"} />
+          <CarouselNext className={isMobile ? "-right-4 top-1/2" : "-right-12 top-1/2"} />
         </Carousel>
       </div>
     </div>

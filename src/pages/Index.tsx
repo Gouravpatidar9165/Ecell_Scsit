@@ -9,7 +9,7 @@ import InfoBulletin from '@/components/InfoBulletin';
 import HODSection from '@/components/HODSection';
 import FoundersSection from '@/components/FoundersSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
-import BranchesSection from '@/components/BranchesSection';
+
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import LoadingScreen from '@/components/LoadingScreen';
