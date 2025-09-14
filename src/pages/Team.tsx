@@ -87,16 +87,39 @@ const Team: React.FC = () => {
   // Convert team members to ChromaGrid items
   const chromaItems: ChromaItem[] = members.map((member, index) => {
     const colorScheme = colorSchemes[index % colorSchemes.length];
-    const firstSocialLink = member.socialLinks?.[0];
+    
+    // Extract LinkedIn and Instagram links
+    const linkedinLink = member.socialLinks?.find(link => 
+      link.icon.toLowerCase().includes('linkedin') || 
+      link.url.toLowerCase().includes('linkedin')
+    );
+    const instagramLink = member.socialLinks?.find(link => 
+      link.icon.toLowerCase().includes('instagram') || 
+      link.url.toLowerCase().includes('instagram')
+    );
+    
+    // Generate usernames from URLs or use member name
+    const linkedinHandle = linkedinLink ? 
+      (linkedinLink.url.includes('linkedin.com/in/') ? 
+        `@${linkedinLink.url.split('linkedin.com/in/')[1].split('/')[0]}` : 
+        `@${member.name.toLowerCase().replace(/\s+/g, '')}`) : 
+      undefined;
+    
+    const instagramHandle = instagramLink ? 
+      (instagramLink.url.includes('instagram.com/') ? 
+        `@${instagramLink.url.split('instagram.com/')[1].split('/')[0]}` : 
+        `@${member.name.toLowerCase().replace(/\s+/g, '')}_ig`) : 
+      undefined;
     
     return {
       image: member.image_url,
       title: member.name,
       subtitle: member.position,
-      handle: firstSocialLink ? `@${member.name.toLowerCase().replace(/\s+/g, '')}` : undefined,
+      handle: linkedinHandle,
+      location: instagramHandle,
       borderColor: colorScheme.borderColor,
       gradient: colorScheme.gradient,
-      url: firstSocialLink?.url
+      url: linkedinLink?.url || instagramLink?.url
     };
   });
 
