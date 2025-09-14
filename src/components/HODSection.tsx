@@ -27,9 +27,8 @@ const HODSection: React.FC = () => {
           
           <RevealAnimation delay={300}>
             <blockquote className="border-l-4 border-blue-500 pl-6 italic text-gray-300">
-              "SCSIT, established in 1986, is a hub for cutting-edge tech education, offering M.Tech, M.Sc., MBA, PGDCA, and BCA programs tailored to industry needs. With a strong focus on research, innovation, and entrepreneurship, the school provides state-of-the-art labs, ICT-enabled infrastructure, and collaborations with top organizations like DRDO, ISRO, and C-DAC.
+              “We wish all students for achieving their academic excellence with life skills. We will always look forward to achieving the heights of accomplishment towards holistic development of students.”
               <br /><br />
-              Students gain hands-on experience through projects, internships, and real-world problem-solving, fostering technical expertise and leadership. Supported by various student development initiatives and backed by experienced faculty, SCSIT is committed to shaping future-ready IT professionals equipped to drive technological advancements and entrepreneurship."
             </blockquote>
             <p className="text-right mt-4 text-blue-300 font-semibold max-w-4xl mx-auto">- Dr. Ugrasen Suman</p>
           </RevealAnimation>
