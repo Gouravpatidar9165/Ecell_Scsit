@@ -30,32 +30,34 @@ const AboutSection: React.FC = () => {
           <div className="space-y-6">
             <RevealAnimation delay={300}>
               <p className="text-lg text-white">
-                The Entrepreneurship Cell (E-Cell) is a student-run organization dedicated to promoting the spirit of entrepreneurship among students. We provide a platform for aspiring entrepreneurs to transform their innovative ideas into successful ventures.
+               Entrepreneurship Cell is a student body based in SCSIT, DAVV Indore which aims at fostering entrepreneurial spirit amongst young aspirants by providing them with a platform and required resources for actuating their ideas into successful business ventures.
               </p>
             </RevealAnimation>
             
             <RevealAnimation delay={400}>
               <p className="text-lg text-white">
-                Through workshops, speaker sessions, mentorship programs, and competitions, we aim to equip students with the knowledge, skills, and network necessary to thrive in the entrepreneurial ecosystem.
+                E-Cell strives at attaining an ideal entrepreneurial environment in the campus and we believe in taking strides towards establishing an ever-growing, an ever-improving Start-Up environment.
+
+                Our sole approach is to magnify the reach and to set up a diverse pool of investors, evaluators and mentors.
               </p>
             </RevealAnimation>
             
             <RevealAnimation delay={500}>
               <div className="pt-4 grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-blue-400">50+</h3>
+                  <h3 className="text-5xl font-bold text-blue-400">10+</h3>
                   <p className="text-sm text-sky-200 font-medium">Events Organized</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-blue-400">5000+</h3>
+                  <h3 className="text-5xl font-bold text-blue-400">800+</h3>
                   <p className="text-sm text-sky-200 font-medium">Students Impacted</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-blue-400">20+</h3>
+                  <h3 className="text-5xl font-bold text-blue-400">3+</h3>
                   <p className="text-sm text-sky-200 font-medium">Startups Incubated</p>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl font-bold text-blue-400">100+</h3>
+                  <h3 className="text-5xl font-bold text-blue-400">10+</h3>
                   <p className="text-sm text-sky-200 font-medium">Industry Partners</p>
                 </div>
               </div>
