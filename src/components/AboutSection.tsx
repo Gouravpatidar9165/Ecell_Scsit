@@ -20,7 +20,7 @@ const AboutSection: React.FC = () => {
           <RevealAnimation delay={200}>
             <div className="rounded-lg overflow-hidden shadow-xl">
               <ImageWithFallback
-                src="/public/images/e-cell-induction.b1356c3ded14f569a3e8.webp"
+                src="public/images/e-cell-induction.b1356c3ded14f569a3e8.png"
                 alt="Students collaborating"
                 className="w-full h-auto object-cover rounded-lg"
               />
